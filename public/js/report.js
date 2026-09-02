@@ -1,4 +1,4 @@
-import { accessibleTextColor, api, conversationIdFromPath, el, groupColor, show, statementRowAttrs } from "./common.js";
+import { api, conversationIdFromPath, el, groupColor, show, statementRowAttrs } from "./common.js";
 import { applyI18n, lang, mountLangSwitch, t } from "./i18n.js";
 
 applyI18n();
@@ -130,144 +130,158 @@ function renderMap(result, you) {
     return;
   }
 
-  const xs = result.points.map((p) => p.x);
-  const ys = result.points.map((p) => p.y);
-  if (you) {
-    xs.push(you.x);
-    ys.push(you.y);
-  }
+  const W = 860;
+  const H = 520;
+  const pad = 56;
+  const plottedPoints = you ? [...result.points, you] : result.points;
+  const xs = plottedPoints.map((p) => p.x);
+  const ys = plottedPoints.map((p) => p.y);
 
   const minX = Math.min(...xs);
   const maxX = Math.max(...xs);
   const minY = Math.min(...ys);
   const maxY = Math.max(...ys);
 
-  const spanX = Math.max(maxX - minX, 0.5);
-  const spanY = Math.max(maxY - minY, 0.5);
-  const padX = spanX * 0.18;
-  const padY = spanY * 0.18;
-
-  const w = 520;
-  const h = 340;
-  const scaleX = (w - 40) / (spanX + padX * 2);
-  const scaleY = (h - 40) / (spanY + padY * 2);
-  const scale = Math.min(scaleX, scaleY);
-
-  const cxWorld = (minX + maxX) / 2;
-  const cyWorld = (minY + maxY) / 2;
-  const toScreen = (p) => ({
-    x: w / 2 + (p.x - cxWorld) * scale,
-    y: h / 2 - (p.y - cyWorld) * scale,
-  });
+  const spanX = maxX - minX;
+  const spanY = maxY - minY;
+  const sx = (x) => (spanX > 0 ? pad + ((x - minX) / spanX) * (W - 2 * pad) : W / 2);
+  const sy = (y) => (spanY > 0 ? H - pad - ((y - minY) / spanY) * (H - 2 * pad) : H / 2);
 
   const svg = svgEl("svg", {
-    viewBox: `0 0 ${w} ${h}`,
+    viewBox: `0 0 ${W} ${H}`,
     class: "map-svg",
     role: "img",
     "aria-label": t("r.mapTitle"),
   });
 
+  const title = svgEl("title", {});
+  title.textContent = t("r.mapTitle");
+  svg.append(title);
+
+  // 恢復原版柔和色雲，讓分群是背景脈絡而不是硬框住的人群。
   const defs = svgEl("defs", {});
+  const blur = svgEl("filter", { id: "hull-blur", x: "-30%", y: "-30%", width: "160%", height: "160%" });
+  blur.append(svgEl("feGaussianBlur", { stdDeviation: 12 }));
+  defs.append(blur);
   svg.append(defs);
 
-  // 1. 群體柔和底色輪廓
+  const axisColor = "color-mix(in srgb, currentColor 8%, transparent)";
+  svg.append(svgEl("line", { x1: W / 2, y1: 16, x2: W / 2, y2: H - 16, stroke: axisColor, "stroke-width": 1 }));
+  svg.append(svgEl("line", { x1: 16, y1: H / 2, x2: W - 16, y2: H / 2, stroke: axisColor, "stroke-width": 1 }));
+
+  const screenPoints = result.points.map((p) => ({ x: sx(p.x), y: sy(p.y), group: p.group }));
+
+  // 群體色雲：低彩度、無框線，不搶過參與者本身。
   if (result.k >= 2) {
-    for (let g = 0; g < result.k; g++) {
-      const gPoints = result.points.filter((p) => p.group === g).map(toScreen);
-      const color = groupColor(g);
-      const d = hullPath(gPoints, 18);
-      if (d) {
-        svg.append(
-          svgEl("path", {
-            d,
-            fill: color,
-            "fill-opacity": "0.14",
-            stroke: color,
-            "stroke-opacity": "0.4",
-            "stroke-width": "1.2",
-            "stroke-linejoin": "round",
-          }),
-        );
-      }
+    for (const group of result.groups) {
+      const members = screenPoints.filter((p) => p.group === group.id);
+      if (members.length < 3) continue;
+      svg.append(
+        svgEl("path", {
+          d: hullPath(members, 26),
+          fill: groupColor(group.id),
+          "fill-opacity": 0.13,
+          filter: "url(#hull-blur)",
+        }),
+      );
     }
   }
 
-  // 2. 參與者圓點
-  const pts = result.points.map((p, idx) => ({ ...toScreen(p), group: p.group, idx }));
-  for (const pt of pts) {
-    const color = groupColor(pt.group);
-    const circle = svgEl("circle", {
-      cx: pt.x.toFixed(1),
-      cy: pt.y.toFixed(1),
-      r: "4.8",
-      fill: color,
-      "fill-opacity": "0.88",
+  screenPoints.forEach((point, index) => {
+    const dot = svgEl("circle", {
+      cx: point.x.toFixed(1),
+      cy: point.y.toFixed(1),
+      r: 5.5,
+      fill: groupColor(point.group),
+      "fill-opacity": 0.85,
       stroke: "var(--surface)",
-      "stroke-width": "1.2",
+      "stroke-width": 1.4,
       class: "dot",
     });
-    circle.style.animationDelay = `${Math.min(pt.idx * 12, 400)}ms`;
-    svg.append(circle);
-  }
-
-  // 3. 群體標籤
-  for (const g of result.groups) {
-    const center = toScreen({ x: g.center[0], y: g.center[1] });
-    const color = groupColor(g.id);
-    const labelCircle = svgEl("circle", {
-      cx: center.x.toFixed(1),
-      cy: center.y.toFixed(1),
-      r: "13",
-      fill: color,
-      stroke: "var(--surface)",
-      "stroke-width": "2",
-    });
-    const textColor = accessibleTextColor(color);
-    const labelText = svgEl("text", {
-      x: center.x.toFixed(1),
-      y: (center.y + 4.5).toFixed(1),
-      "text-anchor": "middle",
-      fill: textColor,
-      "font-size": "11",
-      "font-weight": "700",
-    });
-    labelText.textContent = g.label;
-    svg.append(labelCircle);
-    svg.append(labelText);
-  }
-
-  // 4. 「你」的位置標記
-  if (you) {
-    const youScreen = toScreen(you);
-    const pulse = svgEl("circle", {
-      cx: youScreen.x.toFixed(1),
-      cy: youScreen.y.toFixed(1),
-      r: "12",
-      fill: "none",
-      stroke: "var(--text)",
-      "stroke-width": "1.5",
-      "stroke-dasharray": "2 2",
-      opacity: "0.7",
-    });
-    const dot = svgEl("circle", {
-      cx: youScreen.x.toFixed(1),
-      cy: youScreen.y.toFixed(1),
-      r: "6",
-      fill: "var(--text)",
-      stroke: "var(--surface)",
-      "stroke-width": "2",
-    });
-    const text = svgEl("text", {
-      x: youScreen.x.toFixed(1),
-      y: (youScreen.y - 10).toFixed(1),
-      "text-anchor": "middle",
-      fill: "var(--text)",
-      "font-size": "10",
-      "font-weight": "700",
-    });
-    text.textContent = t("r.you");
-    svg.append(pulse);
+    dot.style.animationDelay = `${Math.min(index * 8, 600)}ms`;
     svg.append(dot);
+  });
+
+  // 群標籤回到原版的文字章，不用實心大圓遮住資料點。
+  if (result.k >= 2) {
+    for (const group of result.groups) {
+      const members = screenPoints.filter((p) => p.group === group.id);
+      if (members.length === 0) continue;
+      const topY = Math.min(...members.map((p) => p.y));
+      const centerX = members.reduce((sum, p) => sum + p.x, 0) / members.length;
+      const label = t("r.groupChip", { label: group.label, size: group.size });
+      const chipWidth = label.length * 8.2 + 26;
+      const chipY = Math.max(topY - 46, 8);
+      svg.append(
+        svgEl("rect", {
+          x: centerX - chipWidth / 2,
+          y: chipY,
+          width: chipWidth,
+          height: 26,
+          rx: 13,
+          fill: groupColor(group.id),
+          "fill-opacity": 0.12,
+        }),
+      );
+      const labelText = svgEl("text", {
+        x: centerX,
+        y: chipY + 17.5,
+        "text-anchor": "middle",
+        "font-size": 12.5,
+        "font-weight": 700,
+        fill: groupColor(group.id),
+      });
+      labelText.textContent = label;
+      svg.append(labelText);
+    }
+  }
+
+  if (you) {
+    const youX = sx(you.x);
+    const youY = sy(you.y);
+    svg.append(
+      svgEl("circle", {
+        cx: youX,
+        cy: youY,
+        r: 11,
+        fill: "none",
+        stroke: "currentColor",
+        "stroke-opacity": 0.3,
+        "stroke-width": 1.6,
+      }),
+    );
+    svg.append(
+      svgEl("circle", {
+        cx: youX,
+        cy: youY,
+        r: 6,
+        fill: "currentColor",
+        stroke: "var(--surface)",
+        "stroke-width": 2,
+      }),
+    );
+    const label = t("r.you");
+    const pillWidth = label.length * 9 + 18;
+    const pillY = Math.max(youY - 38, 6);
+    svg.append(
+      svgEl("rect", {
+        x: youX - pillWidth / 2,
+        y: pillY,
+        width: pillWidth,
+        height: 21,
+        rx: 10.5,
+        fill: "currentColor",
+      }),
+    );
+    const text = svgEl("text", {
+      x: youX,
+      y: pillY + 14.5,
+      "text-anchor": "middle",
+      "font-size": 11.5,
+      "font-weight": 700,
+      fill: "var(--surface)",
+    });
+    text.textContent = label;
     svg.append(text);
     show(document.getElementById("you-note"), true);
   } else {
@@ -277,6 +291,7 @@ function renderMap(result, you) {
   container.append(svg);
 
   for (const g of result.groups) {
+    if (result.k < 2) continue;
     const dot = el("span", { class: "dot" });
     dot.style.backgroundColor = groupColor(g.id);
     legend.append(el("span", {}, [dot, t("r.groupLabel", { label: g.label, size: g.size })]));
