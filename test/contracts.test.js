@@ -176,6 +176,46 @@ describe("品牌與公開版要求", () => {
     expect(zh).toContain("口袋審議");
     expect(zh).toContain("A pocket tool for deliberation, anytime");
   });
+
+  it("發起頁以一句話揭露預設，進階審核與資料設定按需展開", () => {
+    for (const page of ["public/index.html", "public/en.html"]) {
+      const html = read(page);
+      expect(html).toContain('class="plain-box form-advanced"');
+      expect(html).toContain('id="auto-approve" checked');
+      expect(html).toContain('id="allow-submissions" checked');
+      expect(html).toContain('id="open-data"');
+    }
+    expect(read("public/index.html")).toContain("預設：參與者可新增意見並立即公開；匿名資料不開放下載。");
+    expect(read("public/en.html")).toContain("Default: participants can add statements and publish them immediately; anonymized data stays private.");
+  });
+});
+
+describe("漸進揭露資訊架構", () => {
+  it("結果頁先呈現摘要與地圖，再按需展開深入分析、完整意見與資料工具", () => {
+    const html = read("public/report.html");
+    const positions = ["ai-section", "map-section", "deep-analysis", "all-statements-section", "export-section"]
+      .map((id) => html.indexOf(`id="${id}"`));
+    expect(positions.every((position) => position >= 0)).toBe(true);
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
+    expect(html).toMatch(/<details class="report-disclosure" id="deep-analysis">/);
+    expect(html).toMatch(/<details class="report-disclosure hidden" id="export-section">/);
+    expect(html).toContain('class="theme-filter-panel hidden" id="themes-section"');
+  });
+
+  it("管理頁把日常狀態與審核留在主流程，進階設定、完整清單與整合收合", () => {
+    const html = read("public/admin.html");
+    expect(html.indexOf('id="setting-status"')).toBeLessThan(html.indexOf('id="advanced-settings"'));
+    expect(html.indexOf('id="pending-heading"')).toBeLessThan(html.indexOf('id="data-integrations"'));
+    expect(html).toContain('id="mcp-url"');
+    expect(html).toContain("docs/mcp.md");
+  });
+
+  it("參與頁維持單一投票任務，不帶分析、匯出或 MCP 控制", () => {
+    const html = read("public/participate.html");
+    expect(html).not.toContain("deep-analysis");
+    expect(html).not.toContain("export-section");
+    expect(html).not.toContain("mcp-url");
+  });
 });
 
 describe("雙語頁面", () => {

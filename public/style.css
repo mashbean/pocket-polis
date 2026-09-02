@@ -67,6 +67,11 @@ main.narrow {
   padding-top: 1.2rem;
 }
 
+main.report-main {
+  max-width: 960px;
+  padding-top: 1.2rem;
+}
+
 h1 {
   font-size: 1.6rem;
   line-height: 1.25;
@@ -616,6 +621,90 @@ label {
   margin: 2.2rem 0;
 }
 
+.report-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 0.9rem 0 1.8rem;
+}
+
+.report-toolbar .muted {
+  margin: 0 0 0 auto;
+}
+
+.map-and-groups {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.group-summary {
+  min-width: 0;
+}
+
+.group-summary > h3 {
+  margin-top: 0;
+}
+
+.group-summary .portraits-grid {
+  grid-template-columns: 1fr;
+  margin: 0.8rem 0;
+}
+
+.group-summary .card {
+  padding: 1rem;
+  margin: 0.75rem 0;
+}
+
+details.report-disclosure {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin: 1.25rem 0;
+  padding: 0 1.25rem 1.1rem;
+}
+
+details.report-disclosure > summary {
+  cursor: pointer;
+  list-style-position: outside;
+  padding: 1rem 0;
+  font-weight: 650;
+}
+
+details.report-disclosure > summary span,
+details.report-disclosure > summary small {
+  display: block;
+}
+
+details.report-disclosure > summary small {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 400;
+  margin-top: 0.1rem;
+}
+
+details.report-disclosure[open] > summary {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+details.report-disclosure h2 {
+  margin-top: 1rem;
+}
+
+.admin-disclosure {
+  margin-top: 2rem !important;
+}
+
+.integration-block {
+  border-top: 1px solid var(--border);
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+}
+
 .section-header {
   display: flex;
   align-items: baseline;
@@ -688,7 +777,53 @@ label {
   margin: 0 0 0.5rem;
 }
 
-/* 議題網格 */
+/* 主題篩選：以輕量 chips 取代整頁卡片目錄 */
+.theme-filter-panel {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  margin: 1rem 0;
+}
+
+.theme-filter-panel h3 {
+  margin: 0;
+}
+
+.theme-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.theme-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.38rem 0.7rem;
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.86rem;
+}
+
+.theme-filter-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.theme-filter-chip.active .badge {
+  background: color-mix(in srgb, var(--accent-contrast) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent-contrast) 32%, transparent);
+  color: var(--accent-contrast);
+}
+
+.theme-filter-description {
+  margin-top: 0.65rem;
+}
+
+/* 舊版完整議題卡片保留樣式，供相容舊快照或客製前端。 */
 .themes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -1183,6 +1318,20 @@ details.plain-box summary {
   font-size: 0.95rem;
 }
 
+.form-defaults {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin-top: 1rem;
+}
+
+.form-advanced {
+  margin-bottom: 1rem !important;
+}
+
+.form-advanced .checkbox-row:first-of-type {
+  margin-top: 0.85rem;
+}
+
 .mt-lg {
   margin-top: 1.5rem;
 }
@@ -1219,6 +1368,7 @@ footer .credit {
 @media (pointer: coarse) {
   .sid-chip,
   .theme-filter-btn,
+  .theme-filter-chip,
   .button,
   .site-nav .lang,
   .lang-switch a {
@@ -1227,6 +1377,36 @@ footer .credit {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+@media (max-width: 720px) {
+  .report-toolbar .muted {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .map-and-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .group-summary {
+    margin-top: 0.5rem;
+  }
+
+  details.report-disclosure {
+    padding-inline: 1rem;
+  }
+
+  .theme-filter-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    scrollbar-width: thin;
+  }
+
+  .theme-filter-chip {
+    flex: 0 0 auto;
   }
 }
 

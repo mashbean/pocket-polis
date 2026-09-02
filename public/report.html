@@ -17,7 +17,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
-<main class="narrow">
+<main class="report-main">
   <nav class="site-nav compact">
     <a class="wordmark" href="/" id="home-link"><img src="/logo.png" alt="Pocket Polis logo">Pocket Polis <span class="zh" data-i18n="nav.zhName">口袋審議</span></a>
     <span class="lang-switch" id="lang-switch"></span>
@@ -28,11 +28,16 @@
   <p id="load-error" class="error hidden"></p>
 
   <div class="stats-row" id="stats-row"></div>
+  <div class="report-toolbar">
+    <a id="participate-link" class="button primary" href="#" data-i18n="r.participate">去投票</a>
+    <button type="button" id="refresh" data-i18n="r.refresh">重新整理結果</button>
+    <p class="muted" id="computed-at"></p>
+  </div>
 
-  <!-- 階段 1：AI 審議共識與群體洞察 -->
+  <!-- 第一眼只回答「目前看見什麼」；模型只是來源，不是產品主角。 -->
   <section class="report-section" id="ai-section" aria-labelledby="ai-title">
     <div class="section-header">
-      <h2 id="ai-title" data-i18n="r.aiTitle">AI 審議共識與群體洞察</h2>
+      <h2 id="ai-title" data-i18n="r.aiTitle">目前看見什麼</h2>
       <div class="ai-badge-row" id="ai-badge-row">
         <span class="badge ai-model-badge hidden" id="ai-model-badge"></span>
         <span class="badge ai-status-badge hidden" id="ai-status-badge"></span>
@@ -41,67 +46,77 @@
     <div id="ai-overview-container" aria-live="polite"></div>
   </section>
 
-  <!-- 階段 2：議題分類與核心焦點 -->
-  <section class="report-section" id="themes-section" aria-labelledby="themes-title">
-    <h2 id="themes-title" data-i18n="r.themesTitle">議題分類與核心焦點</h2>
-    <p class="muted" data-i18n="r.themesHint">將所有意見依主題歸類，點選主題可查看該焦點下的所有意見與投票率。</p>
-    <div id="themes-container"></div>
-  </section>
-
-  <!-- 階段 3：跨群共識與關鍵張力 -->
-  <section class="report-section" id="insights-section" aria-labelledby="insights-title">
-    <h2 id="insights-title" data-i18n="r.consensusTensionTitle">跨群共識與關鍵張力</h2>
-    <div class="sub-section">
-      <h3 data-i18n="r.commonGroundSubtitle">跨群共通價值與共識原則</h3>
-      <p class="muted" data-i18n="r.consensusHint">每一群都傾向同一邊的意見，也就是立場不同的人仍然共享的看法。</p>
-      <div id="common-ground-container"></div>
-      <div class="card" id="consensus-container"></div>
-    </div>
-    <div class="sub-section">
-      <h3 data-i18n="r.tensionsSubtitle">群間分歧點與推進對話提問</h3>
-      <p class="muted" data-i18n="r.tensionsHint">立場差異最顯著的張力所在，以及有助於促進共識的對話切入點。</p>
-      <div id="tensions-container"></div>
-    </div>
-  </section>
-
-  <!-- 階段 4：意見地圖與各群畫像 -->
+  <!-- 核心結果優先：不需要等待或理解 AI 就能看。 -->
   <section class="report-section" id="map-section" aria-labelledby="map-title">
     <h2 id="map-title" data-i18n="r.mapTitle">意見地圖</h2>
     <p class="muted" data-i18n="r.mapHint">每個點是一位參與者：投票越相似的人靠得越近，顏色代表想法相近的群。投票數還不夠的參與者暫時不會出現。</p>
-    <div id="map-container"></div>
-    <div class="legend" id="legend"></div>
-    <p class="muted hidden" id="you-note" data-i18n="r.youNote">標著「你」的深色圓點，就是你的位置。</p>
-    <h3 data-i18n="r.groupsTitle">各群最有代表性的意見</h3>
-    <p class="muted" data-i18n="r.groupsHint">這些意見最能區分這個群和其他群（差異經過統計檢定確認）。</p>
-    <div id="group-portraits-container"></div>
-    <div id="groups-container"></div>
+    <div class="map-and-groups">
+      <div class="map-panel">
+        <div id="map-container"></div>
+        <div class="legend" id="legend"></div>
+        <p class="muted hidden" id="you-note" data-i18n="r.youNote">標著「你」的深色圓點，就是你的位置。</p>
+      </div>
+      <div class="group-summary">
+        <h3 data-i18n="r.groupsTitle">各群在意什麼</h3>
+        <p class="muted" data-i18n="r.groupsHint">這些意見最能區分這個群和其他群（差異經過統計檢定確認）。</p>
+        <div id="groups-container"></div>
+      </div>
+    </div>
   </section>
 
-  <!-- 階段 5：全部意見清單 -->
+  <details class="report-disclosure" id="deep-analysis">
+    <summary>
+      <span data-i18n="r.deepAnalysisTitle">深入理解這場討論</span>
+      <small data-i18n="r.deepAnalysisHint">查看主題、跨群共識、關鍵張力與推進問題</small>
+    </summary>
+    <section id="insights-section" aria-labelledby="insights-title">
+      <h2 id="insights-title" data-i18n="r.consensusTensionTitle">共識、張力與推進問題</h2>
+      <div class="sub-section">
+        <h3 data-i18n="r.commonGroundSubtitle">跨群共識與共同價值</h3>
+        <p class="muted" data-i18n="r.consensusHint">每一群都傾向同一邊的意見，也就是立場不同的人仍然共享的看法。</p>
+        <div id="common-ground-container"></div>
+        <div class="card" id="consensus-container"></div>
+      </div>
+      <div class="sub-section">
+        <h3 data-i18n="r.tensionsSubtitle">群間分歧與推進對話提問</h3>
+        <p class="muted" data-i18n="r.tensionsHint">立場差異最顯著的張力所在，以及有助於促進共識的對話切入點。</p>
+        <div id="tensions-container"></div>
+      </div>
+      <div class="sub-section">
+        <h3 data-i18n="r.groupPortraitsTitle">各群視角畫像</h3>
+        <div id="group-portraits-container"></div>
+      </div>
+    </section>
+  </details>
+
   <section class="report-section" id="all-statements-section" aria-labelledby="all-title">
     <div class="section-header">
       <h2 id="all-title" data-i18n="r.allTitle">全部意見</h2>
       <button type="button" id="clear-theme-filter" class="button secondary hidden" data-i18n="r.backToAll">顯示全部意見</button>
     </div>
     <p class="muted" data-i18n="r.allHint">所有經審核通過的意見陳述及其全體投票分布。</p>
+    <section class="theme-filter-panel hidden" id="themes-section" aria-labelledby="themes-title">
+      <h3 id="themes-title" data-i18n="r.themesTitle">依主題篩選</h3>
+      <p class="muted" data-i18n="r.themesHint">選一個主題，只查看相關意見與投票分布。</p>
+      <div id="themes-container"></div>
+      <p class="muted theme-filter-description hidden" id="theme-filter-description"></p>
+    </section>
     <div class="card" id="statements-container"></div>
   </section>
 
-  <div class="hidden" id="export-section">
-    <h2 data-i18n="r.exportTitle">資料下載</h2>
+  <details class="report-disclosure hidden" id="export-section">
+    <summary>
+      <span data-i18n="r.exportTitle">資料與其他工具</span>
+      <small data-i18n="r.exportSummary">下載匿名資料，或交給其他工具繼續分析</small>
+    </summary>
     <div class="actions">
       <a class="button" id="export-comments" href="#" data-i18n="r.exportComments">下載 comments.csv</a>
     </div>
     <p class="muted"><span data-i18n="r.exportNote">與 pol.is 報告頁匯出的 comments.csv 同格式，可直接上傳到 AI 意見綜整工具；作者欄以流水號匿名化。</span> <a href="https://make.vtaiwan.tw/" target="_blank" rel="noopener" data-i18n="r.exportSensemaker">試試 vTaiwan Sensemaker →</a></p>
-  </div>
-  <div class="actions">
-    <a id="participate-link" class="button primary" href="#" data-i18n="r.participate">去投票</a>
-    <button type="button" id="refresh" data-i18n="r.refresh">重新整理結果</button>
-  </div>
-  <p class="muted" id="computed-at"></p>
+  </details>
 </main>
 <footer>
-  <div class="inner narrow">
+  <div class="inner report-main">
   <p><a href="/guide#how-it-works" id="method-link" data-i18n="r.methodNote">分群方法說明</a> · <a href="https://github.com/mashbean/pocket-polis" data-i18n="app.sourceLink">原始碼</a></p>
   </div>
 </footer>

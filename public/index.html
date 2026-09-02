@@ -140,9 +140,13 @@
     <label for="seeds">種子意見（一行一句，建議 8–15 句）</label>
     <textarea id="seeds" name="seeds" rows="6" placeholder="例：&#10;我們應該優先改善新成員的加入體驗。&#10;線上聚會比實體聚會更適合我們。"></textarea>
 
-    <label class="checkbox-row"><input type="checkbox" id="auto-approve" checked> 參與者提出的新意見直接公開（不勾＝需要你先核准）</label>
-    <label class="checkbox-row"><input type="checkbox" id="allow-submissions" checked> 開放參與者提出新意見</label>
-    <label class="checkbox-row"><input type="checkbox" id="open-data"> 公開資料下載（任何人可下載匿名化的投票紀錄）</label>
+    <p class="form-defaults">預設：參與者可新增意見並立即公開；匿名資料不開放下載。</p>
+    <details class="plain-box form-advanced">
+      <summary>調整審核與資料設定</summary>
+      <label class="checkbox-row"><input type="checkbox" id="auto-approve" checked> 參與者提出的新意見直接公開（不勾＝需要你先核准）</label>
+      <label class="checkbox-row"><input type="checkbox" id="allow-submissions" checked> 開放參與者提出新意見</label>
+      <label class="checkbox-row"><input type="checkbox" id="open-data"> 公開資料下載（任何人可下載匿名化的投票紀錄）</label>
+    </details>
 
     <div class="actions">
       <button type="submit" class="primary" id="create-button">建立討論</button>
