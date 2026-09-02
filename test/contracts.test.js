@@ -390,6 +390,18 @@ describe("結果頁無障礙、樣式與 CSP 合約", () => {
     expect(styleAttrInEl).toBe(false);
   });
 
+  it("意見地圖沿用寬版柔和色雲，群體卡片在地圖下方自適應排列", () => {
+    const css = read("public/style.css");
+    const js = read("public/js/report.js");
+
+    expect(js).toContain("const W = 860;");
+    expect(js).toContain("const H = 520;");
+    expect(js).toContain('id: "hull-blur"');
+    expect(js).toContain('svgEl("feGaussianBlur", { stdDeviation: 12 })');
+    expect(css).toMatch(/\.map-and-groups\s*\{[^}]*display:\s*block/);
+    expect(css).toMatch(/\.group-summary #groups-container\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit/);
+  });
+
   it("prefers-reduced-motion 覆寫必須位於所有 animation 宣告之後且加 !important，才能贏得同特異性層疊", () => {
     const css = read("public/style.css");
     const rmIdx = css.indexOf("@media (prefers-reduced-motion: reduce)");

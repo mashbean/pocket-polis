@@ -634,14 +634,16 @@ label {
 }
 
 .map-and-groups {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
-  gap: 1.25rem;
-  align-items: start;
+  display: block;
+}
+
+.map-panel {
+  min-width: 0;
 }
 
 .group-summary {
   min-width: 0;
+  margin-top: 1.7rem;
 }
 
 .group-summary > h3 {
@@ -653,9 +655,18 @@ label {
   margin: 0.8rem 0;
 }
 
+.group-summary #groups-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
+  align-items: start;
+  margin-top: 1rem;
+}
+
 .group-summary .card {
   padding: 1rem;
-  margin: 0.75rem 0;
+  margin: 0;
+  min-width: 0;
 }
 
 details.report-disclosure {
@@ -1386,12 +1397,8 @@ footer .credit {
     margin-left: 0;
   }
 
-  .map-and-groups {
-    grid-template-columns: 1fr;
-  }
-
   .group-summary {
-    margin-top: 0.5rem;
+    margin-top: 1.4rem;
   }
 
   details.report-disclosure {
