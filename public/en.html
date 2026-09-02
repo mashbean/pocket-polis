@@ -204,16 +204,6 @@ npm run deploy</pre>
     <p>Really. "Serverless" means <strong>no machine you have to look after</strong> — no hosting to rent, no database to back up, nothing to reboot at 3am. The code runs on Cloudflare's cloud, works only when someone votes, and costs nothing at rest. The full technical discussion (including the alternatives we weighed) is in <a href="https://github.com/mashbean/pocket-polis/blob/main/docs/is-this-serverless.md">this document</a> (zh).</p>
   </details>
   <details class="faq">
-    <summary>How do I use MCP?</summary>
-    <p>MCP lets AI assistants such as Codex and Claude connect directly to Pocket Polis. You do not need it to participate in or host an ordinary discussion. Add the MCP endpoint only when you want an AI assistant to create a conversation, read live results, or help synthesize them. The endpoint is not a web page, so do not open it in a browser.</p>
-    <pre id="mcp-quickstart-en"># Codex
-codex mcp add pocket-polis --url https://polis.mashbean.net/mcp
-
-# Claude Code
-claude mcp add --transport http pocket-polis https://polis.mashbean.net/mcp</pre>
-    <p>After this one-time setup, give the assistant a conversation URL or its 10-character ID and ask naturally — for example: “Summarize each group's positions, cross-group consensus, and major disagreements, citing statement IDs.” Reading the public results of a known conversation needs no token. Managing it or exporting private data requires that conversation's admin token. Self-hosters should replace the URL with their own domain. See the complete <a href="https://github.com/mashbean/pocket-polis/blob/main/docs/mcp.md">MCP tool and access guide</a>.</p>
-  </details>
-  <details class="faq">
     <summary>Are participants identified?</summary>
     <p>No. No registration, no email; the browser keeps only a random code to prevent double counting, and neither the report nor the exports contain any identity. Note: this lightweight approach can't stop determined ballot-stuffing — it suits communities, classrooms, and workshops with basic trust. For adversarial public consultations, use official pol.is.</p>
   </details>
@@ -232,6 +222,16 @@ claude mcp add --transport http pocket-polis https://polis.mashbean.net/mcp</pre
   <details class="faq">
     <summary>Does the demo site have rules?</summary>
     <p>Yes. Conversations involving harassment, hate speech, illegal content, personal-data exposure, or coordinated manipulation may be taken down by the site operator (mashbean) — see the <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>. Self-hosted instances set their own rules.</p>
+  </details>
+  <details class="faq">
+    <summary>What is Pocket Polis MCP, and how do I use it?</summary>
+    <p>MCP lets AI assistants such as Codex and Claude connect directly to Pocket Polis. You do not need it to participate in or host an ordinary discussion. Add the MCP endpoint only when you want an AI assistant to create a conversation, read live results, or help synthesize them. The endpoint is not a web page, so do not open it in a browser.</p>
+    <pre id="mcp-quickstart-en"># Codex
+codex mcp add pocket-polis --url https://polis.mashbean.net/mcp
+
+# Claude Code
+claude mcp add --transport http pocket-polis https://polis.mashbean.net/mcp</pre>
+    <p>After this one-time setup, give the assistant a conversation URL or its 10-character ID and ask naturally — for example: “Summarize each group's positions, cross-group consensus, and major disagreements, citing statement IDs.” Reading the public results of a known conversation needs no token. Managing it or exporting private data requires that conversation's admin token. Self-hosters should replace the URL with their own domain. See the complete <a href="https://github.com/mashbean/pocket-polis/blob/main/docs/mcp.md">MCP tool and access guide</a>.</p>
   </details>
 </main>
 <footer>
