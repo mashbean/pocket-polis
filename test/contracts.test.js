@@ -188,6 +188,20 @@ describe("品牌與公開版要求", () => {
     expect(read("public/index.html")).toContain("預設：參與者可新增意見並立即公開；匿名資料不開放下載。");
     expect(read("public/en.html")).toContain("Default: participants can add statements and publish them immediately; anonymized data stays private.");
   });
+
+  it("中英文常見問題提供 MCP 的零設定邊界、連線指令與權限說明", () => {
+    const zh = read("public/index.html");
+    const en = read("public/en.html");
+    for (const html of [zh, en]) {
+      expect(html).toContain("codex mcp add pocket-polis --url https://polis.mashbean.net/mcp");
+      expect(html).toContain("claude mcp add --transport http pocket-polis https://polis.mashbean.net/mcp");
+      expect(html).toContain("docs/mcp.md");
+    }
+    expect(zh).toContain("一般參與或主持討論不需要設定");
+    expect(zh).toContain("公開結果不需要金鑰");
+    expect(en).toContain("You do not need it to participate in or host an ordinary discussion");
+    expect(en).toContain("public results of a known conversation needs no token");
+  });
 });
 
 describe("漸進揭露資訊架構", () => {
