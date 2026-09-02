@@ -59,12 +59,12 @@
       "head_sampling_rate": 0.1
     }
   },
-  // 正式網域只放在 env.production（比照 delib）：Deploy Button 的複製者
-  // 跑預設環境，不會搶走 polis.mashbean.net。生產與預設必須使用不同 Worker 名，
-  // 否則兩環境綁定同一 Queue 時，後部署者會搶走 consumer 綁定。
+  // 正式網域只放在 env.production：Deploy Button 的複製者跑預設環境，
+  // 不會搶走 polis.mashbean.net。production 必須維持相同 Worker 與 Queue 名稱，
+  // 才會沿用同一個 Durable Object namespace；改名等同切到一套空白資料。
   "env": {
     "production": {
-      "name": "polis-serverless-production",
+      "name": "polis-serverless",
       "durable_objects": {
         "bindings": [
           {
@@ -84,12 +84,12 @@
         "producers": [
           {
             "binding": "SENSEMAKING_QUEUE",
-            "queue": "pocket-polis-sensemaking-production"
+            "queue": "pocket-polis-sensemaking"
           }
         ],
         "consumers": [
           {
-            "queue": "pocket-polis-sensemaking-production",
+            "queue": "pocket-polis-sensemaking",
             "max_batch_size": 1,
             "max_batch_timeout": 5,
             "max_retries": 1
