@@ -396,6 +396,11 @@ function setModelBadge(synthesis) {
 
 function clearSynthesisDom() {
   document.getElementById("themes-container")?.replaceChildren();
+  const themeDescription = document.getElementById("theme-filter-description");
+  if (themeDescription) {
+    themeDescription.textContent = "";
+    show(themeDescription, false);
+  }
   show(document.getElementById("themes-section"), false);
   document.getElementById("common-ground-container")?.replaceChildren();
   document.getElementById("tensions-container")?.replaceChildren();
@@ -580,7 +585,10 @@ function renderAiOverview(synthesis, mathResult) {
 function renderThemes(themes) {
   const section = document.getElementById("themes-section");
   const container = document.getElementById("themes-container");
+  const description = document.getElementById("theme-filter-description");
   container.replaceChildren();
+  description.textContent = "";
+  show(description, false);
 
   if (!themes || themes.length === 0) {
     show(section, false);
@@ -588,31 +596,37 @@ function renderThemes(themes) {
   }
   show(section, true);
 
-  const grid = el("div", { class: "themes-grid" });
+  const filters = el("div", { class: "theme-filter-list", role: "group", "aria-label": t("r.themesTitle") });
+  const allButton = el("button", {
+    type: "button",
+    class: `theme-filter-chip ${activeThemeFilter === null ? "active" : ""}`,
+    text: t("r.allThemes"),
+    "aria-pressed": activeThemeFilter === null ? "true" : "false",
+  });
+  allButton.addEventListener("click", () => {
+    activeThemeFilter = null;
+    renderThemes(themes);
+    renderStatements(currentMathResult);
+  });
+  filters.append(allButton);
 
   for (const th of themes) {
     const isSelected = activeThemeFilter === th.id;
-    // 依 de-duplicated union 計算總數與預覽
+    // 依 de-duplicated union 計算總數；詳細內容留在清單，不讓主題目錄搶走地圖主流程。
     const unionSids = th.statementIds && th.statementIds.length > 0
       ? th.statementIds
       : [...new Set([...th.primaryStatementIds, ...(th.secondaryStatementIds || [])])];
 
     const totalCount = unionSids.length;
-    const previewSids = unionSids.slice(0, 5);
-    const remaining = totalCount - previewSids.length;
-
-    const chipsChildren = previewSids.map((sid) => citationButton(sid));
-    if (remaining > 0) {
-      chipsChildren.push(
-        el("span", { class: "badge count-badge more-badge", text: `+${remaining}` }),
-      );
-    }
-
     const filterBtn = el("button", {
       type: "button",
-      class: `button theme-filter-btn ${isSelected ? "active" : ""}`,
-      text: isSelected ? t("r.clearFilter") : `${t("r.filterByTheme")} →`,
-    });
+      class: `theme-filter-chip ${isSelected ? "active" : ""}`,
+      "aria-pressed": isSelected ? "true" : "false",
+      title: th.description,
+    }, [
+      el("span", { text: th.title }),
+      el("span", { class: "badge count-badge", text: t("r.themeStatements", { n: totalCount }) }),
+    ]);
 
     filterBtn.addEventListener("click", () => {
       activeThemeFilter = activeThemeFilter === th.id ? null : th.id;
@@ -622,29 +636,15 @@ function renderThemes(themes) {
         smoothOrAutoScroll(document.getElementById("all-statements-section"));
       }
     });
-    const card = el(
-      "article",
-      {
-        class: `theme-card ${isSelected ? "selected" : ""}`,
-      },
-      [
-        el("div", { class: "theme-header" }, [
-          el("h3", { text: th.title }),
-          el("span", {
-            class: "badge count-badge",
-            text: t("r.themeStatements", { n: totalCount }),
-          }),
-        ]),
-        el("p", { class: "muted theme-desc", text: th.description }),
-        el("div", { class: "theme-chips" }, chipsChildren),
-        el("div", { class: "theme-action-row" }, [filterBtn]),
-      ],
-    );
+    filters.append(filterBtn);
 
-    grid.append(card);
+    if (isSelected && th.description) {
+      description.textContent = th.description;
+      show(description, true);
+    }
   }
 
-  container.append(grid);
+  container.append(filters);
 }
 
 function renderCommonGroundSynthesis(cg) {

@@ -35,16 +35,23 @@
       <div class="link-row"><code id="admin-url"></code><button type="button" data-copy="admin-url" data-i18n="a.copy">複製</button></div>
     </div>
 
-    <h2 data-i18n="a.settingsTitle">設定</h2>
+    <h2 data-i18n="a.statusTitle">討論狀態</h2>
     <div class="card">
       <label class="checkbox-row"><input type="checkbox" id="setting-status"> <span data-i18n="a.settingOpen">開放投票中（取消勾選即結束討論）</span></label>
+    </div>
+    <p id="settings-message" class="muted hidden" aria-live="polite"></p>
+
+    <details class="report-disclosure admin-disclosure" id="advanced-settings">
+      <summary>
+        <span data-i18n="a.settingsTitle">進階設定</span>
+        <small data-i18n="a.settingsHint">調整投稿審核、資料公開與其他語言版本</small>
+      </summary>
       <label class="checkbox-row"><input type="checkbox" id="setting-autoApprove"> <span data-i18n="a.settingAutoApprove">新意見直接公開（否則需你核准）</span></label>
       <label class="checkbox-row"><input type="checkbox" id="setting-allowSubmissions"> <span data-i18n="a.settingAllowSubmissions">開放參與者提出意見</span></label>
       <label class="checkbox-row"><input type="checkbox" id="setting-openData"> <span data-i18n="a.settingOpenData">公開資料下載（任何人可下載匿名化 CSV）</span></label>
       <label for="setting-altUrl" data-i18n="a.settingAltUrl">另一語言版本的連結（選填，會顯示在參與與結果頁）</label>
       <input type="text" id="setting-altUrl" placeholder="https://…">
-      <p id="settings-message" class="muted hidden"></p>
-    </div>
+    </details>
 
     <h2 id="pending-heading">待核准意見</h2>
     <div class="card" id="pending-container"></div>
@@ -55,16 +62,32 @@
       <div class="actions"><button type="button" class="primary" id="seed-add" data-i18n="a.seedAdd">加入</button></div>
     </div>
 
-    <h2 data-i18n="a.allTitle">全部意見</h2>
-    <div class="card" id="all-statements"></div>
+    <details class="report-disclosure admin-disclosure">
+      <summary>
+        <span data-i18n="a.allTitle">全部意見</span>
+        <small data-i18n="a.allSummary">查看已公開、待核准與已退回的完整清單</small>
+      </summary>
+      <div class="card" id="all-statements"></div>
+    </details>
 
-    <h2 data-i18n="a.exportTitle">資料下載</h2>
-    <div class="actions">
-      <a class="button" id="export-comments" href="#" data-i18n="a.exportComments">下載 comments.csv（pol.is 格式）</a>
-      <a class="button" id="export-statements" href="#" data-i18n="a.exportStatements">下載意見清單 CSV</a>
-      <a class="button" id="export-votes" href="#" data-i18n="a.exportVotes">下載投票紀錄 CSV（匿名化）</a>
-    </div>
-    <p class="muted" data-i18n="a.exportNote">投票紀錄以 p1、p2⋯ 匿名化，可交給任何分析工具（例如 red-dwarf）交叉驗證。</p>
+    <details class="report-disclosure admin-disclosure" id="data-integrations">
+      <summary>
+        <span data-i18n="a.exportTitle">資料與整合</span>
+        <small data-i18n="a.exportSummary">下載匿名資料，或連接分析工具與 AI 助手</small>
+      </summary>
+      <div class="actions">
+        <a class="button" id="export-comments" href="#" data-i18n="a.exportComments">下載 comments.csv（pol.is 格式）</a>
+        <a class="button" id="export-statements" href="#" data-i18n="a.exportStatements">下載意見清單 CSV</a>
+        <a class="button" id="export-votes" href="#" data-i18n="a.exportVotes">下載投票紀錄 CSV（匿名化）</a>
+      </div>
+      <p class="muted" data-i18n="a.exportNote">投票紀錄以 p1、p2⋯ 匿名化，可交給任何分析工具（例如 red-dwarf）交叉驗證。</p>
+      <div class="integration-block">
+        <h3 data-i18n="a.mcpTitle">連接 AI 助手（MCP）</h3>
+        <p class="muted" data-i18n="a.mcpHint">進階使用者可以讓支援 MCP 的 AI 助手讀取公開結果或協助主持；一般使用完全不需要設定。</p>
+        <div class="link-row"><code id="mcp-url"></code><button type="button" data-copy="mcp-url" data-i18n="a.copy">複製</button></div>
+        <p><a href="https://github.com/mashbean/pocket-polis/blob/main/docs/mcp.md" target="_blank" rel="noopener" data-i18n="a.mcpDocs">查看 MCP 設定與權限說明 →</a></p>
+      </div>
+    </details>
   </div>
 </main>
 <footer>

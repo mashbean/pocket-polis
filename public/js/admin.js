@@ -53,6 +53,7 @@ async function refresh() {
   document.getElementById("participate-url").textContent = `${origin}/c/${convId}`;
   document.getElementById("report-url").textContent = `${origin}/r/${convId}`;
   document.getElementById("admin-url").textContent = `${origin}/a/${convId}#token=${token}`;
+  document.getElementById("mcp-url").textContent = `${origin}/mcp`;
 
   document.getElementById("setting-status").checked = settings.status === "open";
   document.getElementById("setting-autoApprove").checked = settings.autoApprove;

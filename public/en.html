@@ -140,9 +140,13 @@
     <label for="seeds">Seed statements (one per line, 8–15 recommended)</label>
     <textarea id="seeds" name="seeds" rows="6" placeholder="e.g.,&#10;We should prioritize improving the onboarding experience.&#10;Online meetups work better for us than in-person ones."></textarea>
 
-    <label class="checkbox-row"><input type="checkbox" id="auto-approve" checked> New statements publish immediately (untick to approve each one yourself)</label>
-    <label class="checkbox-row"><input type="checkbox" id="allow-submissions" checked> Participants can add statements</label>
-    <label class="checkbox-row"><input type="checkbox" id="open-data"> Public data export (anyone can download the anonymized votes)</label>
+    <p class="form-defaults">Default: participants can add statements and publish them immediately; anonymized data stays private.</p>
+    <details class="plain-box form-advanced">
+      <summary>Adjust moderation and data settings</summary>
+      <label class="checkbox-row"><input type="checkbox" id="auto-approve" checked> New statements publish immediately (untick to approve each one yourself)</label>
+      <label class="checkbox-row"><input type="checkbox" id="allow-submissions" checked> Participants can add statements</label>
+      <label class="checkbox-row"><input type="checkbox" id="open-data"> Public data export (anyone can download the anonymized votes)</label>
+    </details>
 
     <div class="actions">
       <button type="submit" class="primary" id="create-button">Create conversation</button>
