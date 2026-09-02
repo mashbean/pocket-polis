@@ -204,6 +204,16 @@ npm run deploy</pre>
     <p>對。「無伺服器」的意思是：<strong>沒有一台你需要照顧的機器</strong>。不用租主機、不用備份資料庫、不用半夜重開機。程式放在 Cloudflare 的雲端服務上，有人投票才運轉，平常不耗資源也不收費。完整的技術說明（包括我們比較過哪些替代方案）在<a href="https://github.com/mashbean/pocket-polis/blob/main/docs/is-this-serverless.md">這份文件</a>。</p>
   </details>
   <details class="faq">
+    <summary>MCP 要怎麼用？</summary>
+    <p>MCP 是給 Codex、Claude 等 AI 助手使用的連接方式。一般參與或主持討論不需要設定；想讓 AI 直接建立場次、讀取即時結果或協助綜整時，才需要把 Pocket Polis 的 MCP 端點加進 AI 助手。端點不是網頁，不用在瀏覽器打開。</p>
+    <pre id="mcp-quickstart"># Codex
+codex mcp add pocket-polis --url https://polis.mashbean.net/mcp
+
+# Claude Code
+claude mcp add --transport http pocket-polis https://polis.mashbean.net/mcp</pre>
+    <p>設定一次後，直接告訴 AI 場次網址或 10 碼場次 ID，例如：「讀取這場討論，整理各群立場、跨群共識和主要分歧，並附上意見編號。」讀取指定場次的公開結果不需要金鑰；管理場次或匯出非公開資料時，才需要該場討論的管理金鑰。自架者請把網址換成自己的網域。完整工具與權限說明見 <a href="https://github.com/mashbean/pocket-polis/blob/main/docs/mcp.md">MCP 文件</a>。</p>
+  </details>
+  <details class="faq">
     <summary>參與的人會被記名嗎？</summary>
     <p>不會。不用註冊、不填 email；瀏覽器只保存一個隨機代號避免重複計票。結果頁和下載的資料裡都沒有任何身分資訊。提醒：這種輕量做法擋不住刻意的灌票，適合彼此有基本信任的社群、課堂、工作坊；高對抗性的公共諮詢請用官方 pol.is。</p>
   </details>
