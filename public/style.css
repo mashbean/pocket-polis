@@ -675,26 +675,32 @@ details.report-disclosure {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   margin: 1.25rem 0;
-  padding: 0 1.25rem 1.1rem;
+  padding: 0 1.25rem;
 }
 
 details.report-disclosure > summary {
   cursor: pointer;
   list-style-position: outside;
-  padding: 1rem 0;
+  padding: 0.85rem 0;
   font-weight: 650;
 }
 
 details.report-disclosure > summary span,
 details.report-disclosure > summary small {
-  display: block;
+  display: inline;
 }
 
 details.report-disclosure > summary small {
+  border-left: 1px solid var(--border);
   color: var(--muted);
   font-size: 0.84rem;
   font-weight: 400;
-  margin-top: 0.1rem;
+  margin-left: 0.75rem;
+  padding-left: 0.75rem;
+}
+
+details.report-disclosure[open] {
+  padding-bottom: 1.1rem;
 }
 
 details.report-disclosure[open] > summary {
@@ -1403,6 +1409,18 @@ footer .credit {
 
   details.report-disclosure {
     padding-inline: 1rem;
+  }
+
+  details.report-disclosure > summary span,
+  details.report-disclosure > summary small {
+    display: block;
+  }
+
+  details.report-disclosure > summary small {
+    border-left: 0;
+    margin-left: 0;
+    margin-top: 0.15rem;
+    padding-left: 0;
   }
 
   .theme-filter-list {
