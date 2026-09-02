@@ -680,9 +680,27 @@ details.report-disclosure {
 
 details.report-disclosure > summary {
   cursor: pointer;
-  list-style-position: outside;
-  padding: 0.85rem 0;
+  list-style: none;
+  padding: 0.85rem 0 0.85rem 1.5rem;
+  position: relative;
   font-weight: 650;
+}
+
+details.report-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.report-disclosure > summary::before {
+  border-bottom: 2px solid var(--muted);
+  border-right: 2px solid var(--muted);
+  content: "";
+  height: 0.42rem;
+  left: 0.1rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) rotate(-45deg);
+  transition: transform 160ms ease;
+  width: 0.42rem;
 }
 
 details.report-disclosure > summary span,
@@ -701,6 +719,10 @@ details.report-disclosure > summary small {
 
 details.report-disclosure[open] {
   padding-bottom: 1.1rem;
+}
+
+details.report-disclosure[open] > summary::before {
+  transform: translateY(-65%) rotate(45deg);
 }
 
 details.report-disclosure[open] > summary {

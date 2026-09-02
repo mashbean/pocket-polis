@@ -223,6 +223,8 @@ describe("漸進揭露資訊架構", () => {
   it("結果頁收合摘要在桌面維持單列，只有展開後才保留內容底部間距", () => {
     const css = read("public/style.css");
     expect(css).toMatch(/details\.report-disclosure \{[\s\S]*?padding: 0 1\.25rem;/);
+    expect(css).toMatch(/details\.report-disclosure > summary \{[\s\S]*?padding: 0\.85rem 0 0\.85rem 1\.5rem;/);
+    expect(css).toMatch(/details\.report-disclosure > summary::before \{[\s\S]*?left: 0\.1rem;/);
     expect(css).toMatch(/details\.report-disclosure > summary span,[\s\S]*?display: inline;/);
     expect(css).toMatch(/details\.report-disclosure\[open\] \{\s*padding-bottom: 1\.1rem;/);
     expect(css).toMatch(/@media \(max-width: 720px\)[\s\S]*?details\.report-disclosure > summary span,[\s\S]*?display: block;/);
