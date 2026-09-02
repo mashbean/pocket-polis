@@ -199,8 +199,12 @@ describe("品牌與公開版要求", () => {
     }
     expect(zh).toContain("一般參與或主持討論不需要設定");
     expect(zh).toContain("公開結果不需要金鑰");
+    expect(zh).toContain("Pocket Polis MCP 是什麼？要怎麼用？");
+    expect(zh.indexOf("Pocket Polis MCP 是什麼？要怎麼用？")).toBeGreaterThan(zh.indexOf("示範站有使用規範嗎？"));
     expect(en).toContain("You do not need it to participate in or host an ordinary discussion");
     expect(en).toContain("public results of a known conversation needs no token");
+    expect(en).toContain("What is Pocket Polis MCP, and how do I use it?");
+    expect(en.indexOf("What is Pocket Polis MCP, and how do I use it?")).toBeGreaterThan(en.indexOf("Does the demo site have rules?"));
   });
 });
 
