@@ -20,6 +20,7 @@ const readme = read("README.md");
 describe("wrangler.jsonc", () => {
   it("worker 名稱與進入點", () => {
     expect(wrangler.name).toBe("polis-serverless");
+    expect(wrangler.env.production.name).toBe(wrangler.name);
     expect(wrangler.main).toBe("src/index.ts");
   });
 
@@ -58,10 +59,9 @@ describe("wrangler.jsonc", () => {
     expect(wrangler.queues.consumers[0].queue).toBe("pocket-polis-sensemaking");
     expect(wrangler.queues.consumers[0].max_retries).toBe(1);
     expect(wrangler.env.production.queues.producers[0].binding).toBe("SENSEMAKING_QUEUE");
-    // 每個環境各自的 Queue：一條 Queue 只能有一個作用中 consumer，共用會被後部署者搶走
-    expect(wrangler.env.production.queues.producers[0].queue).toBe("pocket-polis-sensemaking-production");
-    expect(wrangler.env.production.queues.consumers[0].queue).toBe("pocket-polis-sensemaking-production");
-    expect(wrangler.env.production.queues.consumers[0].queue).not.toBe(wrangler.queues.consumers[0].queue);
+    // 自訂網域部署必須沿用同一個 Worker/Queue，否則會切到空白 Durable Object namespace。
+    expect(wrangler.env.production.queues.producers[0].queue).toBe("pocket-polis-sensemaking");
+    expect(wrangler.env.production.queues.consumers[0].queue).toBe(wrangler.queues.consumers[0].queue);
     expect(wrangler.env.production.queues.consumers[0].max_retries).toBe(1);
     expect(wrangler.env.production.routes).toEqual([
       { pattern: "polis.mashbean.net", custom_domain: true },
@@ -492,7 +492,7 @@ describe("el() 選填子節點", () => {
 describe("ensure-queue 環境隔離", () => {
   it("resolveQueueName 依環境從 wrangler.jsonc 取各自的 consumer Queue，找不到即拋錯", () => {
     expect(resolveQueueName("")).toBe("pocket-polis-sensemaking");
-    expect(resolveQueueName("production")).toBe("pocket-polis-sensemaking-production");
+    expect(resolveQueueName("production")).toBe("pocket-polis-sensemaking");
     expect(() => resolveQueueName("staging")).toThrow(/staging/);
   });
 });

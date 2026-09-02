@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-// 部署前確保該環境的 Queue 存在。每個 Wrangler 環境使用各自的 Queue 名稱：
-// 一個 Queue 只能有一個作用中的 Worker consumer，若預設環境與 production 共用同一 Queue，
-// 後部署者會搶走 consumer binding，訊息就會跑到另一個環境（不同的 Durable Object namespace）。
+// 部署前確保該環境的 Queue 存在。正式設定刻意與預設設定使用同一個
+// Worker 與 Queue，讓自訂網域部署沿用既有 Durable Object namespace。
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
