@@ -37,5 +37,27 @@
     "@modelcontextprotocol/server": "2.0.0",
     "agents": "^0.22.0",
     "zod": "^4.5.4"
+  },
+  "cloudflare": {
+    "bindings": {
+      "ASSETS": {
+        "description": "Static participant, report and admin pages."
+      },
+      "CONVERSATION": {
+        "description": "One SQLite Durable Object per conversation (statements, votes, clustering)."
+      },
+      "NEURON_COORDINATOR": {
+        "description": "Durable Object coordinating background sensemaking jobs."
+      },
+      "SENSEMAKING_QUEUE": {
+        "description": "Queue for background clustering and summaries; created on first deploy."
+      },
+      "AI": {
+        "description": "Workers AI binding used for optional summaries."
+      },
+      "MCP_ADMIN_TOKEN": {
+        "description": "Optional secret: enables private enumeration and global administration over MCP. Leave empty unless you operate MCP clients."
+      }
+    }
   }
 }

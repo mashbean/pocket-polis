@@ -34,6 +34,13 @@ function runWrangler(args) {
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMain) {
   const envName = process.argv[2] || "";
+  // Workers Builds (Deploy button / Git integration) sets WORKERS_CI=1 and uses a
+  // token that may not manage Queues. Wrangler creates the queue on first deploy
+  // there, so skip the pre-check instead of failing closed.
+  if (process.env.WORKERS_CI) {
+    console.log(`WORKERS_CI detected; skipping queue pre-check for "${resolveQueueName(envName)}" (wrangler deploy provisions it).`);
+    process.exit(0);
+  }
   const queueName = resolveQueueName(envName);
   // 1. Check if queue already exists
   const info1 = runWrangler(["queues", "info", queueName]);

@@ -1,0 +1,4 @@
+# Optional. Enables private enumeration and global administration over the MCP
+# endpoint. Per-conversation admin tokens work without it; leave empty for a
+# plain Deploy-button install.
+MCP_ADMIN_TOKEN=
