@@ -1379,6 +1379,133 @@ details.plain-box summary {
   display: none !important;
 }
 
+/* 螢幕閱讀器可見、視覺上隱藏（下拉選單本身已自我說明，標籤不佔版面） */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- 公開議題列表 ---- */
+
+.directory-notice h2 {
+  font-size: 1rem;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.directory-notice p {
+  font-size: 0.92rem;
+}
+
+.directory-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin: 1.6rem 0 0.8rem;
+}
+
+.directory-toolbar input[type="text"] {
+  flex: 1 1 16rem;
+  width: auto;
+}
+
+.directory-toolbar select {
+  font: inherit;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.directory-toolbar select:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-color: var(--accent);
+}
+
+.directory-list {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0.6rem 0 1.4rem;
+}
+
+.directory-card {
+  margin: 0;
+}
+
+.directory-card-header {
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.directory-card-header h3 {
+  font-size: 1.08rem;
+  margin: 0;
+  min-width: 0;
+}
+
+.badge.directory-status {
+  flex-shrink: 0;
+}
+
+.badge.directory-status.open {
+  color: var(--accent-2);
+  border-color: color-mix(in srgb, var(--accent-2) 30%, transparent);
+  background: color-mix(in srgb, var(--accent-2) 8%, transparent);
+}
+
+/* 說明是別人寫的自由文字：限高三行，避免一則長說明把整張列表撐開 */
+.directory-description {
+  margin: 0.5rem 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.directory-meta {
+  margin: 0.7rem 0 0;
+  font-size: 0.86rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.9rem;
+}
+
+.directory-meta-item {
+  white-space: nowrap;
+}
+
+/* 分隔點：純視覺，讀出來的順序仍然是「數字＋單位」 */
+.directory-meta-item + .directory-meta-item::before {
+  content: "·";
+  margin-right: 0.9rem;
+  color: var(--border);
+}
+
+.directory-meta-item strong {
+  color: var(--text);
+}
+
+.directory-actions {
+  align-items: center;
+  margin-top: 0.9rem;
+}
+
+.directory-empty {
+  text-align: center;
+}
+
 /* ---- Footer ---- */
 
 footer {

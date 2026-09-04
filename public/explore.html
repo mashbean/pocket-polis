@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>大家的議題 — Pocket Polis 口袋審議</title>
+  <meta name="description" content="Pocket Polis 公用示範站上，由使用者自行建立、選擇公開資料的討論列表。這些議題不由站方建立或背書，違反行為準則者會被下架。">
+  <meta property="og:title" content="大家的議題 — Pocket Polis 口袋審議">
+  <meta property="og:description" content="由使用者自行發起的公開討論。挑一個進去投票，看看大家的意見分成幾群。Conversations started by the people who use this site.">
+  <meta property="og:url" content="https://polis.mashbean.net/explore">
+  <meta property="og:image" content="https://polis.mashbean.net/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+</head>
+<body>
+<main class="report-main">
+  <nav class="site-nav compact">
+    <a class="wordmark" href="/" id="home-link"><img src="/logo.png" alt="Pocket Polis logo">Pocket Polis <span class="zh" data-i18n="nav.zhName">口袋審議</span></a>
+    <span class="lang-switch" id="lang-switch"></span>
+  </nav>
+
+  <h1 data-i18n="x.title">大家的議題</h1>
+  <p class="muted" data-i18n="x.lede">這裡列出在這個公用站上、建立者選擇公開資料的討論。點進去就能投票，不用註冊。</p>
+
+  <!-- 責任歸屬要在看到任何題目之前就講清楚：列表在下面，這段在上面。 -->
+  <section class="notice directory-notice" aria-labelledby="disclaimer-title">
+    <h2 id="disclaimer-title" data-i18n="x.disclaimerTitle">這些議題不是 mashbean（豆泥）建立的</h2>
+    <p data-i18n="x.disclaimer">每一場討論都由使用這個公用站的人自己發起，題目、說明與意見都出自發起人與參與者，不代表站方的立場，也未經站方查證或背書。出現騷擾、仇恨言論、違法內容、洩露個資或灌票操弄時，站方會依行為準則直接下架，不另行通知。</p>
+    <p>
+      <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md" data-i18n="x.cocLink">讀行為準則</a>
+      ·
+      <a href="https://github.com/mashbean/pocket-polis/issues/new" data-i18n="x.reportLink">回報違規議題</a>
+    </p>
+  </section>
+
+  <form class="directory-toolbar" id="filter-form" role="search">
+    <input type="text" id="search-input" name="q" maxlength="120" data-i18n-placeholder="x.searchPlaceholder" placeholder="搜尋題目或說明">
+    <label class="visually-hidden" for="status-select" id="status-label" data-i18n="x.filterLabel">狀態</label>
+    <select id="status-select" name="status">
+      <option value="all" data-i18n="x.filterAll">全部</option>
+      <option value="open" data-i18n="x.filterOpen">進行中</option>
+      <option value="closed" data-i18n="x.filterClosed">已結束</option>
+    </select>
+    <button type="submit" class="primary" data-i18n="x.searchButton">搜尋</button>
+  </form>
+
+  <p class="muted" id="result-count" aria-live="polite"></p>
+  <p id="load-error" class="error hidden"></p>
+
+  <div id="directory-list" class="directory-list"></div>
+
+  <div class="actions" id="more-actions">
+    <button type="button" id="load-more" class="hidden" data-i18n="x.loadMore">看更多</button>
+  </div>
+
+  <section class="card" id="create-cta">
+    <h2 data-i18n="x.createTitle">你也可以開一場</h2>
+    <p class="muted" data-i18n="x.createHint">寫一個題目、幾句種子意見，一分鐘就能開始收集大家的想法。</p>
+    <div class="actions">
+      <a class="button primary" id="create-link" href="/#create" data-i18n="x.createButton">一鍵發起</a>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="inner report-main">
+    <p><a href="https://github.com/mashbean/pocket-polis" data-i18n="app.sourceLink">原始碼</a> · <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md" data-i18n="x.cocLink">讀行為準則</a></p>
+  </div>
+</footer>
+<script type="module" src="/js/explore.js"></script>
+</body>
+</html>

@@ -29,6 +29,7 @@ The endpoint is not a web page. Connect with an MCP client or the MCP Inspector.
 | `add_seed_statement` | Add an approved host statement | Per-discussion admin or global token |
 | `update_conversation_settings` | Change title, moderation, openData, status and alternate URL | Per-discussion admin or global token |
 | `register_conversation` | Add a known legacy 10-character conversation ID to enumeration | Global token |
+| `set_conversation_listing` | Delist a conversation from the public directory under the Code of Conduct, or restore it | Global token |
 | `backfill_conversation_registry` | Inspect Cloudflare Durable Object hash IDs and register conversations | Global token |
 
 Tool results are returned as both readable text and `structuredContent` when appropriate.
@@ -87,6 +88,18 @@ Pocket Polis maintains a SQLite `conversation_registry` in a singleton Durable O
 - A discussion created before this feature registers the first time its public ID is accessed.
 - The two official demo IDs are probed and registered on the first list operation.
 - A known old discussion can be added with `register_conversation`.
+- Each discussion refreshes its registry snapshot at most once every 5 minutes while it is
+  being used, and immediately whenever its settings change — so withdrawing `openData`
+  removes it from the public directory right away.
+
+### Code of Conduct takedowns
+
+`set_conversation_listing` marks a registry row as delisted. Delisted rows disappear from the
+public directory (`GET /api/conversations` and `/explore`) and from public MCP enumeration,
+but the conversation, its links and its data are untouched — re-registration does not undo a
+delisting. Global-token enumeration (`scope=all`) still returns delisted rows, flagged with
+`delisted` and `delistedReason`. To stop participation as well, close the conversation with
+`update_conversation_settings`.
 
 To guarantee immediate enumeration of every pre-registry Durable Object, use Cloudflare's
 Durable Objects Namespace Objects API to obtain its hash IDs, then pass batches of at most

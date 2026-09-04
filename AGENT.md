@@ -47,6 +47,7 @@ curl -X POST $BASE/api/conversations -H 'Content-Type: application/json' -d '{
 
 | Endpoint | Purpose |
 |---|---|
+| `GET /api/conversations?status=&q=&limit=&cursor=` | public directory: conversations whose creator set `openData`, minus any delisted under the Code of Conduct |
 | `GET /api/conversations/:id` | public info & counts |
 | `GET /api/conversations/:id/next?pid=<uuid>` | next statement for a participant to vote on |
 | `POST /api/conversations/:id/votes` `{pid,sid,value:1\|-1\|0}` | cast a vote (1 = agree) |

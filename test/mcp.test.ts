@@ -34,7 +34,7 @@ describe("MCP authorization and surface", () => {
   });
 
   it("exposes the complete discussion lifecycle tool set", () => {
-    expect(MCP_TOOL_NAMES).toHaveLength(15);
+    expect(MCP_TOOL_NAMES).toHaveLength(16);
     expect(new Set(MCP_TOOL_NAMES).size).toBe(MCP_TOOL_NAMES.length);
   });
 

@@ -43,6 +43,9 @@ export interface PublicInfo {
 export interface ConversationRegistryEntry extends PublicInfo {
   indexedAt: number;
   updatedAt: number;
+  /** 依行為準則自公開列表下架；下架後仍可用原網址參與，只是不再被列舉。 */
+  delisted: boolean;
+  delistedReason: string;
 }
 
 export interface ConversationRegistryPage {
@@ -86,6 +89,8 @@ const CREATE_PER_HOUR = 10;
 const CREATE_PER_DAY = 50;
 const REGISTRY_OBJECT_NAME = "conversation-registry";
 const REGISTRY_VERSION = "1";
+// registry 快照的重新整理間隔：公開列表要顯示參與人數與票數，登錄一次就凍結會失真。
+const REGISTRY_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 
 export interface CheckSynthesisResult {
@@ -227,6 +232,12 @@ export class Conversation extends DurableObject<Env> {
         `CREATE INDEX idx_conversation_registry_open_data_created
            ON conversation_registry(open_data, created_at DESC, id)`,
       ],
+      // v4：行為準則下架旗標。下架只影響列舉，不刪除討論本身。
+      [
+        `ALTER TABLE conversation_registry ADD COLUMN delisted INTEGER NOT NULL DEFAULT 0`,
+        `ALTER TABLE conversation_registry ADD COLUMN delisted_reason TEXT NOT NULL DEFAULT ''`,
+        `ALTER TABLE conversation_registry ADD COLUMN delisted_at INTEGER NOT NULL DEFAULT 0`,
+      ],
     ];
     for (let v = 1; v <= migrations.length; v++) {
       if (applied.has(v)) continue;
@@ -313,11 +324,20 @@ export class Conversation extends DurableObject<Env> {
    * DO，避免每一票都再打一次 registry RPC。
    */
   private async syncRegistry(force: boolean): Promise<void> {
-    if (!force && this.getMeta("registryVersion") === REGISTRY_VERSION) return;
+    const now = Date.now();
+    if (!force) {
+      if (this.getMeta("registryVersion") !== REGISTRY_VERSION) {
+        // 尚未登錄過：補登
+      } else if (now - Number(this.getMeta("registrySyncedAt") ?? "0") < REGISTRY_REFRESH_INTERVAL_MS) {
+        return;
+      }
+    }
+    // 先寫時間戳再送 RPC：登錄失敗時也不會讓每個請求都重試一次跨 DO 呼叫
+    this.setMeta("registrySyncedAt", String(now));
     const info = await this.publicInfo();
     if (!info) return;
     const registry = this.env.CONVERSATION.getByName(REGISTRY_OBJECT_NAME);
-    await registry.registerConversation(info, Date.now());
+    await registry.registerConversation(info, now);
     this.setMeta("registryVersion", REGISTRY_VERSION);
   }
 
@@ -1285,6 +1305,8 @@ export class Conversation extends DurableObject<Env> {
   async listRegisteredConversations(options: {
     status?: "open" | "closed";
     includePrivate: boolean;
+    /** 只有全域管理者會看到已下架的討論；公開列表一律排除。 */
+    includeDelisted?: boolean;
     query?: string;
     limit: number;
     cursor?: string;
@@ -1298,6 +1320,7 @@ export class Conversation extends DurableObject<Env> {
       params.push(options.status);
     }
     if (!options.includePrivate) conditions.push("open_data = 1");
+    if (!options.includeDelisted) conditions.push("delisted = 0");
     const query = options.query?.trim().slice(0, 120);
     if (query) {
       conditions.push("(title LIKE ? ESCAPE '\\' OR description LIKE ? ESCAPE '\\')");
@@ -1326,6 +1349,31 @@ export class Conversation extends DurableObject<Env> {
       total,
       nextCursor: nextOffset < total ? String(nextOffset) : null,
     };
+  }
+
+  /**
+   * 行為準則下架：把討論移出公開列表。討論本身與原網址不受影響——刪資料是另一件事，
+   * 這裡只撤回「站方替它公開曝光」。之後的 registerConversation 不會把它重新掛回去。
+   */
+  async setConversationListing(
+    id: string,
+    delisted: boolean,
+    reason: string,
+    now: number,
+  ): Promise<{ ok: true; delisted: boolean } | { ok: false; error: string }> {
+    const rows = this.sql().exec(`SELECT id FROM conversation_registry WHERE id = ?`, id).toArray();
+    if (rows.length === 0) return { ok: false, error: "conversation is not in the registry" };
+    this.sql().exec(
+      `UPDATE conversation_registry
+         SET delisted = ?, delisted_reason = ?, delisted_at = ?, updated_at = ?
+       WHERE id = ?`,
+      delisted ? 1 : 0,
+      delisted ? reason.trim().slice(0, 300) : "",
+      delisted ? now : 0,
+      now,
+      id,
+    );
+    return { ok: true, delisted };
   }
 
   /** 已知官方 demo 在第一次列舉時補進 registry；不存在時安靜略過。 */
@@ -1374,5 +1422,7 @@ function registryRowToEntry(row: Record<string, SqlStorageValue>): ConversationR
     createdAt: Number(row.created_at),
     indexedAt: Number(row.indexed_at),
     updatedAt: Number(row.updated_at),
+    delisted: Number(row.delisted ?? 0) === 1,
+    delistedReason: String(row.delisted_reason ?? ""),
   };
 }

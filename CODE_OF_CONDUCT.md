@@ -23,6 +23,12 @@ The public demo site is a shared free resource. If a conversation involves any o
 - 垃圾內容、廣告，或明顯與審議無關的濫用
   Spam, advertising, or abuse plainly unrelated to deliberation
 
+### 公開議題列表 · Public directory
+
+示範站的 <https://polis.mashbean.net/explore> 列出**建立時勾選「公開資料下載」**的討論。這些議題由使用者自行發起，**不由站方建立、查證或背書**；站方對列表的責任僅止於：依上述規範把違規討論移出列表（必要時併同關閉討論）。不希望被列出的討論，建立時不要勾選該選項即可——未列出的討論仍可正常以連結分享。
+
+The demo site lists conversations at <https://polis.mashbean.net/explore> when their creator ticked **"Public data export"**. These topics are started by users and are **not created, vetted, or endorsed by the site operator**; the operator's responsibility for the directory is limited to removing violating conversations from it under the rules above (and closing them where necessary). To stay unlisted, leave that option unticked — unlisted conversations still work normally when their link is shared.
+
 下架決定如有疑義，可在 GitHub 開 issue 討論。示範站不保證可用性與資料保存；正式或長期使用請[部署到自己的帳號](README.md)，自架站點由部署者自行訂定並負責其使用規範。
 
 Takedown decisions can be discussed via a GitHub issue. The demo site comes with no availability or retention guarantees; for serious or long-term use, [deploy your own instance](README.md) — self-hosted instances set and enforce their own rules.

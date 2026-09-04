@@ -21,6 +21,7 @@
 <main>
   <nav class="site-nav">
     <a class="wordmark" href="/"><img src="/logo.png" alt="Pocket Polis logo">Pocket Polis <span class="zh">口袋審議</span></a>
+    <a href="/explore">大家的議題</a>
     <a href="/guide">實務指南</a>
     <a href="/r/3ovoxq5c6o">示範</a>
     <a href="#self-host">自己架一個</a>
@@ -34,6 +35,7 @@
       <p class="lede">一句話就可以請 AI Agent 幫你搞定的輕量版 <a href="https://compdemocracy.org/polis/">Polis</a>，且不需要煩惱伺服器（謝謝 Cloudflare）。自動匯集群眾意見，馬上畫出<strong>意見地圖</strong>。按一下就可以開始。</p>
       <div class="actions hero-actions">
         <a class="button primary" href="#create">一鍵發起</a>
+        <a class="button" href="/explore">看大家的議題</a>
         <a class="button" href="/r/3ovoxq5c6o">先看示範</a>
       </div>
       <div class="check-row">
@@ -145,7 +147,7 @@
       <summary>調整審核與資料設定</summary>
       <label class="checkbox-row"><input type="checkbox" id="auto-approve" checked> 參與者提出的新意見直接公開（不勾＝需要你先核准）</label>
       <label class="checkbox-row"><input type="checkbox" id="allow-submissions" checked> 開放參與者提出新意見</label>
-      <label class="checkbox-row"><input type="checkbox" id="open-data"> 公開資料下載（任何人可下載匿名化的投票紀錄）</label>
+      <label class="checkbox-row"><input type="checkbox" id="open-data"> 公開資料下載（任何人可下載匿名化的投票紀錄，這場討論也會列在<a href="/explore">大家的議題</a>）</label>
     </details>
 
     <div class="actions">
@@ -220,8 +222,12 @@ npm run deploy</pre>
     <p>存在部署者的 Cloudflare 帳號裡，每場討論各自獨立。主持人隨時可以下載完整的意見清單與投票紀錄（匿名化 CSV），也可以選擇開放任何人下載。</p>
   </details>
   <details class="faq">
+    <summary>「大家的議題」列的是什麼？</summary>
+    <p><a href="/explore">大家的議題</a>列出這個公用站上、建立時勾選「公開資料下載」的討論。這些題目由使用者自己發起，<strong>不是站方建立的，也未經站方查證或背書</strong>；違反行為準則的討論會被下架。不想被列出就不要勾選那個選項——不勾的討論一樣可以用連結分享，只是不會被列舉。</p>
+  </details>
+  <details class="faq">
     <summary>示範站有使用規範嗎？</summary>
-    <p>有。出現騷擾、仇恨言論、違法內容、洩露個資、灌票操弄等情況時，站方（mashbean）有權下架相關討論，詳見<a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">行為準則</a>。自架的站點由部署者自訂規範。</p>
+    <p>有。出現騷擾、仇恨言論、違法內容、洩露個資、灌票操弄等情況時，站方（mashbean）有權下架相關討論、或把它移出<a href="/explore">大家的議題</a>，詳見<a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">行為準則</a>。自架的站點由部署者自訂規範。</p>
   </details>
   <details class="faq">
     <summary>Pocket Polis MCP 是什麼？要怎麼用？</summary>
@@ -236,7 +242,7 @@ claude mcp add --transport http pocket-polis https://polis.mashbean.net/mcp</pre
 </main>
 <footer>
   <div class="inner">
-    <p><a href="/guide">實務指南</a> · <a href="https://github.com/mashbean/pocket-polis">原始碼</a>（MIT）· <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">行為準則</a> · <a href="/en">English</a><br>
+    <p><a href="/explore">大家的議題</a> · <a href="/guide">實務指南</a> · <a href="https://github.com/mashbean/pocket-polis">原始碼</a>（MIT）· <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">行為準則</a> · <a href="/en">English</a><br>
     Pocket Polis（口袋審議）依 Polis 公開文獻重新實作，與 The Computational Democracy Project 的 pol.is 無隸屬關係。驗證資料：compdemocracy openData（CC BY 4.0）。</p>
     <p class="credit">Created and maintained by <a href="https://github.com/mashbean">mashbean</a></p>
   </div>

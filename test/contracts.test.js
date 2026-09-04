@@ -27,7 +27,7 @@ describe("wrangler.jsonc", () => {
   it("靜態資產 binding 與 run_worker_first 路徑", () => {
     expect(wrangler.assets.directory).toBe("./public");
     expect(wrangler.assets.binding).toBe("ASSETS");
-    for (const path of ["/", "/api/*", "/mcp", "/c/*", "/r/*", "/a/*", "/en", "/en/*", "/guide"]) {
+    for (const path of ["/", "/api/*", "/mcp", "/c/*", "/r/*", "/a/*", "/en", "/en/*", "/explore", "/guide"]) {
       expect(wrangler.assets.run_worker_first).toContain(path);
     }
   });
@@ -114,6 +114,7 @@ describe("MCP", () => {
       "add_seed_statement",
       "update_conversation_settings",
       "register_conversation",
+      "set_conversation_listing",
       "backfill_conversation_registry",
     ]) {
       expect(source).toContain(`"${tool}"`);
@@ -162,6 +163,35 @@ describe("品牌與公開版要求", () => {
     expect(zh).toContain("一鍵發起");
     expect(zh).toContain("Created and maintained by");
     expect(zh).not.toContain("deploy.workers.cloudflare.com/button");
+  });
+
+  it("公開議題列表：入口、來源揭露與下架依據齊備", () => {
+    const zh = read("public/index.html");
+    const en = read("public/en.html");
+    // 兩個語系的首頁都要有進得去的入口
+    expect(zh).toContain('href="/explore"');
+    expect(en).toContain('href="/explore?lang=en"');
+    // 勾選公開資料就會被列出，這件事必須寫在核取方塊本身
+    expect(zh).toMatch(/id="open-data"[^]*?大家的議題/);
+    expect(en).toMatch(/id="open-data"[^]*?Community topics/);
+
+    const explore = read("public/explore.html");
+    expect(explore).toContain('data-i18n="x.disclaimerTitle"');
+    expect(explore).toContain("CODE_OF_CONDUCT.md");
+
+    // 揭露文案：非站方建立，且違規會被下架
+    expect(STRINGS["x.disclaimerTitle"][0]).toContain("mashbean");
+    for (const langIndex of [0, 1]) {
+      expect(STRINGS["x.disclaimer"][langIndex]).toMatch(/背書|endorsed/);
+      expect(STRINGS["x.disclaimer"][langIndex]).toMatch(/下架|taken down/);
+    }
+
+    // 只列出 openData 且未下架者；扇出查詢會燒穿免費額度，公開列表讀 registry 快照
+    const service = read("src/service.ts");
+    expect(service).toContain("includePrivate: false");
+    expect(service).toContain("includeDelisted: false");
+    expect(read("src/conversation.ts")).toContain("delisted");
+    expect(read("CODE_OF_CONDUCT.md")).toContain("/explore");
   });
 
   it("行為準則存在且含下架規範", () => {

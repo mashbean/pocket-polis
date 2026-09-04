@@ -3,7 +3,14 @@ import type { VoteValue } from "./math/types";
 import { createMcpHandler } from "agents/mcp/server";
 import { invalidateConversationPublicCache } from "./cache";
 import { createPocketPolisMcpServer, isGlobalMcpAdmin } from "./mcp";
-import { createConversationFromInput, randomId, sha256Hex } from "./service";
+import {
+  createConversationFromInput,
+  directoryCacheKeySuffix,
+  listPublicConversations,
+  parseDirectoryQuery,
+  randomId,
+  sha256Hex,
+} from "./service";
 
 export { Conversation } from "./conversation";
 export { NeuronCoordinator } from "./neuron-coordinator";
@@ -74,13 +81,15 @@ async function handleFetchWithCache(
   const reqCc = (request.headers.get("Cache-Control") || "").toLowerCase();
   const hasBypassHeader =
     reqCc.includes("no-cache") || reqCc.includes("no-store") || reqCc.includes("max-age=0");
-  const isCacheableCandidate =
-    isGet && !hasAuth && !hasPid && !hasBypassHeader && isPublicCacheablePath(url.pathname);
+  const cacheKeyUrl =
+    isGet && !hasAuth && !hasPid && !hasBypassHeader ? publicCacheKeyUrl(url) : null;
+  const isCacheableCandidate = cacheKeyUrl !== null;
 
   const cache = typeof caches !== "undefined" && caches.default ? caches.default : null;
 
-  // 正則化快取鍵值：所有允許之公開路徑均不依賴 query 參數，正則化移除所有查詢字串，防止邊緣快取分裂
-  const cacheKey = new Request(url.origin + url.pathname, { method: "GET" });
+  // 正則化快取鍵值：多數公開路徑不依賴 query 參數，直接丟掉查詢字串；
+  // 議題列表依賴 status/q/limit/cursor，改用正規化後的白名單參數，防止邊緣快取分裂。
+  const cacheKey = new Request(cacheKeyUrl ?? url.origin + url.pathname, { method: "GET" });
 
   if (isCacheableCandidate && cache) {
     try {
@@ -142,6 +151,7 @@ async function handleRequest(
     }
 
     if (url.pathname === "/api/conversations") {
+      if (request.method === "GET") return listConversationDirectory(url, env);
       if (request.method !== "POST") return jsonError("method not allowed", 405);
       return createConversation(request, env);
     }
@@ -176,6 +186,7 @@ const PAGE_REWRITES: [RegExp, string][] = [
   [/^\/r\/[a-z0-9]{10}$/, "/report"],
   [/^\/a\/[a-z0-9]{10}$/, "/admin"],
   [/^\/en$/, "/en"],
+  [/^\/explore$/, "/explore"],
   [/^\/guide$/, "/guide"],
   [/^\/en\/guide$/, "/guide-en"],
 ];
@@ -274,6 +285,16 @@ async function createConversation(request: Request, env: Env): Promise<Response>
   return result.ok
     ? json(result.value, 201, { "Cache-Control": "no-store" })
     : jsonError(result.error, result.status);
+}
+
+/**
+ * 公開議題列表。只有建立者勾選「公開資料」的討論會出現，依行為準則下架者一律排除。
+ * 60 秒邊緣快取：內容本來就是每 5 分鐘才回寫一次的快照，不需要更即時。
+ */
+async function listConversationDirectory(url: URL, env: Env): Promise<Response> {
+  const query = parseDirectoryQuery(url.searchParams);
+  const page = await listPublicConversations(env, query);
+  return json(page, 200, { "Cache-Control": "public, max-age=60, s-maxage=60" });
 }
 
 // ---- per-conversation API ----
@@ -528,24 +549,31 @@ function csvResponse(csv: string, filename: string): Response {
 }
 
 
-function isPublicCacheablePath(pathname: string): boolean {
+/** 可快取的公開請求回傳其正規化快取鍵值網址；不可快取則回傳 null。 */
+function publicCacheKeyUrl(url: URL): string | null {
+  const pathname = url.pathname;
+  // 議題列表是唯一依賴 query 的可快取端點：只保留白名單參數，並固定順序
+  if (pathname === "/api/conversations") {
+    return `${url.origin}${pathname}?${directoryCacheKeySuffix(parseDirectoryQuery(url.searchParams))}`;
+  }
   if (
     pathname === "/" ||
     pathname === "/en" ||
+    pathname === "/explore" ||
     pathname === "/guide" ||
     pathname === "/en/guide"
   ) {
-    return true;
+    return url.origin + pathname;
   }
   if (/^\/(c|r)\/[a-z0-9]{10}$/.test(pathname)) {
-    return true;
+    return url.origin + pathname;
   }
   if (pathname === "/api/health") {
-    return true;
+    return url.origin + pathname;
   }
   if (/^\/api\/conversations\/[a-z0-9]{10}(\/(statements-public|results|synthesis))?$/.test(pathname)) {
-    return true;
+    return url.origin + pathname;
   }
-  return false;
+  return null;
 }
 export const _internal = { randomId, sha256Hex };

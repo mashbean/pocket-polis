@@ -10,7 +10,7 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/", "/api/*", "/mcp", "/c/*", "/r/*", "/a/*", "/en", "/en/*", "/guide"]
+    "run_worker_first": ["/", "/api/*", "/mcp", "/c/*", "/r/*", "/a/*", "/en", "/en/*", "/explore", "/guide"]
   },
   "durable_objects": {
     "bindings": [

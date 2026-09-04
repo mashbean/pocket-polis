@@ -3,12 +3,15 @@ import { z } from "zod";
 import { invalidateConversationPublicCache } from "./cache";
 import type { Conversation, ConversationRegistryEntry, PublicInfo } from "./conversation";
 import type { VoteValue } from "./math/types";
-import { createConversationFromInput, getConversation } from "./service";
+import {
+  KNOWN_CONVERSATION_IDS,
+  createConversationFromInput,
+  getConversation,
+  registryStub,
+} from "./service";
 
 const MCP_SERVER_NAME = "pocket-polis";
 const MCP_SERVER_VERSION = "0.1.0";
-const REGISTRY_OBJECT_NAME = "conversation-registry";
-const KNOWN_CONVERSATION_IDS = ["3ovoxq5c6o", "qx7fc5m3ql"];
 
 const conversationIdSchema = z
   .string()
@@ -317,6 +320,37 @@ export function createPocketPolisMcpServer(env: Env, access: PocketPolisMcpAcces
   );
 
   server.registerTool(
+    "set_conversation_listing",
+    {
+      title: "Delist or relist a conversation",
+      description:
+        "Take a conversation down from the public directory under the Code of Conduct, or restore it. " +
+        "This only withdraws the site's listing: the conversation, its links, and its data are untouched. " +
+        "To stop participation as well, close it with update_conversation_settings. Requires global MCP access.",
+      inputSchema: z.object({
+        conversationId: conversationIdSchema,
+        delisted: z.boolean().describe("true takes the conversation off the public directory"),
+        reason: z
+          .string()
+          .max(300)
+          .default("")
+          .describe("Which Code of Conduct rule applies; kept for the takedown record"),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    },
+    async ({ conversationId, delisted, reason }) => {
+      if (!access.globalAdmin) return toolError("global MCP authorization required");
+      const result = await registry(env).setConversationListing(
+        conversationId,
+        delisted,
+        reason,
+        Date.now(),
+      );
+      return result.ok ? toolResult(result) : toolError(result.error);
+    },
+  );
+
+  server.registerTool(
     "backfill_conversation_registry",
     {
       title: "Backfill legacy Durable Objects",
@@ -458,6 +492,8 @@ async function listConversations(
   const page = await registryStub.listRegisteredConversations({
     status: options.status && options.status !== "all" ? options.status : undefined,
     includePrivate,
+    // 依行為準則下架的討論只對全域管理者可見，公開列舉一律排除
+    includeDelisted: access.globalAdmin,
     query: options.query,
     limit: options.limit ?? 25,
     cursor: options.cursor,
@@ -466,7 +502,15 @@ async function listConversations(
   const live = await Promise.all(
     page.conversations.map(async (entry) => {
       const info = await env.CONVERSATION.getByName(`conv:${entry.id}`).publicInfo();
-      return info ? { ...info, indexedAt: entry.indexedAt, updatedAt: entry.updatedAt } : null;
+      return info
+        ? {
+            ...info,
+            indexedAt: entry.indexedAt,
+            updatedAt: entry.updatedAt,
+            delisted: entry.delisted,
+            delistedReason: entry.delistedReason,
+          }
+        : null;
     }),
   );
   return { conversations: live.filter((item): item is ConversationRegistryEntry => item !== null), total: page.total, nextCursor: page.nextCursor };
@@ -484,7 +528,7 @@ async function conversationDetails(env: Env, conversationId: string, includeStat
 }
 
 function registry(env: Env): DurableObjectStub<Conversation> {
-  return env.CONVERSATION.getByName(REGISTRY_OBJECT_NAME);
+  return registryStub(env);
 }
 
 function exportData(
@@ -544,5 +588,6 @@ export const MCP_TOOL_NAMES = [
   "add_seed_statement",
   "update_conversation_settings",
   "register_conversation",
+  "set_conversation_listing",
   "backfill_conversation_registry",
 ] as const;

@@ -206,6 +206,48 @@ export const STRINGS = {
     "管理金鑰只存在此分頁的 sessionStorage，關閉分頁即清除。",
     "The host key lives only in this tab's sessionStorage and is cleared when the tab closes.",
   ],
+
+  // 公開議題列表
+  "x.navLink": ["大家的議題", "Community topics"],
+  "x.title": ["大家的議題", "Community topics"],
+  "x.lede": [
+    "這裡列出在這個公用站上、建立者選擇公開資料的討論。點進去就能投票，不用註冊。",
+    "Conversations hosted here whose creators chose to make the data public. Open one and vote — no sign-up.",
+  ],
+  "x.disclaimerTitle": ["這些議題不是 mashbean（豆泥）建立的", "These topics were not created by mashbean"],
+  "x.disclaimer": [
+    "每一場討論都由使用這個公用站的人自己發起，題目、說明與意見都出自發起人與參與者，不代表站方的立場，也未經站方查證或背書。出現騷擾、仇恨言論、違法內容、洩露個資或灌票操弄時，站方會依行為準則直接下架，不另行通知。",
+    "Every conversation here was started by whoever used this public site. The topics, descriptions, and statements come from those people, not from the site operator, and are neither vetted nor endorsed. Conversations involving harassment, hate speech, illegal content, exposure of personal data, or coordinated manipulation are taken down under the Code of Conduct without prior notice.",
+  ],
+  "x.cocLink": ["讀行為準則", "Read the Code of Conduct"],
+  "x.reportLink": ["回報違規議題", "Report a violation"],
+  "x.searchPlaceholder": ["搜尋題目或說明", "Search topics and descriptions"],
+  "x.searchButton": ["搜尋", "Search"],
+  "x.filterLabel": ["狀態", "Status"],
+  "x.filterAll": ["全部", "All"],
+  "x.filterOpen": ["進行中", "Open"],
+  "x.filterClosed": ["已結束", "Closed"],
+  "x.statusOpen": ["進行中", "Open"],
+  "x.statusClosed": ["已結束", "Closed"],
+  "x.total": ["共 {n} 場討論", "{n} conversations"],
+  "x.totalFiltered": ["符合「{q}」的有 {n} 場", "{n} conversations match \u201c{q}\u201d"],
+  "x.empty": ["目前沒有符合的議題。", "No conversations match yet."],
+  "x.emptyHint": [
+    "建立討論時展開「調整審核與資料設定」、勾選「公開資料下載」，討論就會出現在這份列表。",
+    "To appear in this list, open \u201cAdjust moderation and data settings\u201d when creating a conversation and tick \u201cPublic data export\u201d.",
+  ],
+  "x.loadFail": ["無法載入議題列表", "Couldn\u2019t load the list"],
+  "x.loadMore": ["看更多", "Load more"],
+  "x.join": ["加入投票", "Join"],
+  "x.report": ["看意見地圖", "See the map"],
+  "x.created": ["{date} 建立", "Created {date}"],
+  "x.noDescription": ["（發起人沒有寫說明）", "(no description given)"],
+  "x.createTitle": ["你也可以開一場", "Start your own"],
+  "x.createHint": [
+    "寫一個題目、幾句種子意見，一分鐘就能開始收集大家的想法。",
+    "Write a question and a few seed statements — you can be collecting views within a minute.",
+  ],
+  "x.createButton": ["一鍵發起", "Start in one step"],
 };
 
 export function currentLang() {

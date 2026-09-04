@@ -21,6 +21,7 @@
 <main>
   <nav class="site-nav">
     <a class="wordmark" href="/en"><img src="/logo.png" alt="Pocket Polis logo">Pocket Polis</a>
+    <a href="/explore?lang=en">Community topics</a>
     <a href="/en/guide">Facilitator guide</a>
     <a href="/r/qx7fc5m3ql?lang=en">Demo</a>
     <a href="#self-host">Host your own</a>
@@ -34,6 +35,7 @@
       <p class="lede">A lightweight <a href="https://compdemocracy.org/polis/">Polis</a> your AI agent can set up from a single prompt, with no servers to worry about (thanks, Cloudflare). It gathers everyone's views and maps them instantly. One click to start.</p>
       <div class="actions hero-actions">
         <a class="button primary" href="#create">Start in one step</a>
+        <a class="button" href="/explore?lang=en">Browse community topics</a>
         <a class="button" href="/r/qx7fc5m3ql?lang=en">See the demo</a>
       </div>
       <div class="check-row">
@@ -145,7 +147,7 @@
       <summary>Adjust moderation and data settings</summary>
       <label class="checkbox-row"><input type="checkbox" id="auto-approve" checked> New statements publish immediately (untick to approve each one yourself)</label>
       <label class="checkbox-row"><input type="checkbox" id="allow-submissions" checked> Participants can add statements</label>
-      <label class="checkbox-row"><input type="checkbox" id="open-data"> Public data export (anyone can download the anonymized votes)</label>
+      <label class="checkbox-row"><input type="checkbox" id="open-data"> Public data export (anyone can download the anonymized votes, and this conversation is listed under <a href="/explore?lang=en">Community topics</a>)</label>
     </details>
 
     <div class="actions">
@@ -220,8 +222,12 @@ npm run deploy</pre>
     <p>In the deployer's own Cloudflare account, each conversation isolated. The host can download the full statement list and anonymized vote records as CSV at any time, or make the export public.</p>
   </details>
   <details class="faq">
+    <summary>What is listed under Community topics?</summary>
+    <p><a href="/explore?lang=en">Community topics</a> lists conversations on this public site whose creators ticked "Public data export". These topics were started by the people who use the site — <strong>they are not created, vetted, or endorsed by the site operator</strong> — and conversations that break the Code of Conduct are taken down. To stay off the list, leave that option unticked; unlisted conversations still work exactly the same when you share their link.</p>
+  </details>
+  <details class="faq">
     <summary>Does the demo site have rules?</summary>
-    <p>Yes. Conversations involving harassment, hate speech, illegal content, personal-data exposure, or coordinated manipulation may be taken down by the site operator (mashbean) — see the <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>. Self-hosted instances set their own rules.</p>
+    <p>Yes. Conversations involving harassment, hate speech, illegal content, personal-data exposure, or coordinated manipulation may be taken down — or removed from <a href="/explore?lang=en">Community topics</a> — by the site operator (mashbean); see the <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>. Self-hosted instances set their own rules.</p>
   </details>
   <details class="faq">
     <summary>What is Pocket Polis MCP, and how do I use it?</summary>
@@ -236,7 +242,7 @@ claude mcp add --transport http pocket-polis https://polis.mashbean.net/mcp</pre
 </main>
 <footer>
   <div class="inner">
-    <p><a href="/en/guide">Facilitator guide</a> · <a href="https://github.com/mashbean/pocket-polis">Source</a> (MIT) · <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a> · <a href="/">中文</a><br>
+    <p><a href="/explore?lang=en">Community topics</a> · <a href="/en/guide">Facilitator guide</a> · <a href="https://github.com/mashbean/pocket-polis">Source</a> (MIT) · <a href="https://github.com/mashbean/pocket-polis/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a> · <a href="/">中文</a><br>
     Pocket Polis reimplements the clustering method from the published Polis literature; not affiliated with The Computational Democracy Project's pol.is. Validation data: compdemocracy openData (CC BY 4.0).</p>
     <p class="credit">Created and maintained by <a href="https://github.com/mashbean">mashbean</a></p>
   </div>
