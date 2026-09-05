@@ -190,11 +190,11 @@ export function createPocketPolisMcpServer(env: Env, access: PocketPolisMcpAcces
     {
       title: "Export conversation data",
       description:
-        "Export comments.csv, statements.csv, or anonymized votes.csv. OpenData conversations are public; " +
+        "Export comments.csv, statements.csv, anonymized votes.csv, or tttc.csv (Talk to the City id,interview,comment). OpenData conversations are public; " +
         "otherwise supply the conversation admin token or global MCP bearer token.",
       inputSchema: z.object({
         conversationId: conversationIdSchema,
-        format: z.enum(["comments", "statements", "votes"]),
+        format: z.enum(["comments", "statements", "votes", "tttc"]),
         adminToken: adminTokenSchema,
       }),
       annotations: readOnlyAnnotations,
@@ -533,12 +533,13 @@ function registry(env: Env): DurableObjectStub<Conversation> {
 
 function exportData(
   stub: DurableObjectStub<Conversation>,
-  format: "comments" | "statements" | "votes",
+  format: "comments" | "statements" | "votes" | "tttc",
   token: string | null,
   trusted: boolean,
 ): Promise<string | null> {
   if (format === "comments") return stub.exportCommentsCsv(token, trusted);
   if (format === "statements") return stub.exportStatementsCsv(token, trusted);
+  if (format === "tttc") return stub.exportTttcCsv(token, trusted);
   return stub.exportVotesCsv(token, trusted);
 }
 

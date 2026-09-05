@@ -6,7 +6,21 @@ import {
   moderatedFlag,
   POLIS_COMMENTS_HEADER,
   polisDatetime,
+  formatTttcCsv,
+  TTTC_HEADER,
 } from "../src/export";
+
+describe("Talk to the City tttc.csv", () => {
+  it("uses the tttc-light-js three-column contract and marks sources as host or pN", () => {
+    expect(TTTC_HEADER).toBe("id,interview,comment");
+    expect(formatTttcCsv([])).toBe("id,interview,comment\n");
+    const csv = formatTttcCsv([
+      { sid: 1, text: "種子意見", isSeed: true, authorId: 0 },
+      { sid: 5, text: '他說 "好"，然後走了', isSeed: false, authorId: 3 },
+    ]);
+    expect(csv).toBe('id,interview,comment\nstatement-1,host,"種子意見"\nstatement-5,p3,"他說 ""好""，然後走了"\n');
+  });
+});
 
 // pol.is 相容的 comments.csv（issue #1）。黃金樣本取自 issue 的偽資料，
 // 但引號規則以 pol.is 報告頁實際匯出的檔案為準：datetime 不加引號、comment-body 一律加引號。

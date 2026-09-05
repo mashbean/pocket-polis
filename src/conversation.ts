@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import { computeMath, privacySafeMathResult } from "./math/pipeline";
-import { csvEscape, formatCommentsCsv } from "./export";
+import { csvEscape, formatCommentsCsv, formatTttcCsv } from "./export";
 import type { MathResult, OpinionPoint, VoteRow, VoteValue } from "./math/types";
 import {
   AI_ATTEMPT_WINDOW_MS,
@@ -1229,6 +1229,20 @@ export class Conversation extends DurableObject<Env> {
         createdAt: Number(r.created_at),
       }));
     return formatCommentsCsv(rows);
+  }
+
+  /** Talk to the City 匯入格式（id,interview,comment）。只含已核准意見；interview 與 votes.csv 同一套 pN 匿名代號，種子為 host。 */
+  async exportTttcCsv(token: string | null, trusted = false): Promise<string | null> {
+    if (!(await this.canExport(token, trusted))) return null;
+    const rows = this.sql()
+      .exec(
+        `SELECT s.sid, s.text, s.is_seed, COALESCE(p.seq, 0) AS author
+         FROM statements s LEFT JOIN participants p ON p.pid = s.submitter_pid
+         WHERE s.status = 'approved' ORDER BY s.sid`,
+      )
+      .toArray()
+      .map((r) => ({ sid: Number(r.sid), text: String(r.text), isSeed: Number(r.is_seed) === 1, authorId: Number(r.author) }));
+    return formatTttcCsv(rows);
   }
 
   /** 長格式投票匯出。參與者以加入順序匿名化為 p1、p2⋯，不輸出 pid。 */

@@ -134,6 +134,19 @@ export const STRINGS = {
   "r.exportTitle": ["資料與其他工具", "Data & other tools"],
   "r.exportSummary": ["下載匿名資料，或交給其他工具繼續分析", "Download anonymized data or continue in another tool"],
   "r.exportComments": ["下載 comments.csv", "Download comments.csv"],
+  "r.exportTttc": ["下載 tttc.csv", "Download tttc.csv"],
+  "r.exportStatements": ["下載 statements.csv", "Download statements.csv"],
+  "r.exportVotes": ["下載 votes.csv", "Download votes.csv"],
+  "r.exportTttcNote": [
+    "tttc.csv 是 Talk to the City 的匯入格式（id,interview,comment），只含已核准意見，來源以 host 與 pN 匿名代號標記。",
+    "tttc.csv is the Talk to the City import format (id,interview,comment): approved statements only, sources marked as host or the anonymized pN participant codes.",
+  ],
+  "r.exportTttcLink": ["Talk to the City →", "Talk to the City →"],
+  "r.exportWorkbenchNote": [
+    "statements.csv 與 votes.csv 是 delib 資料工作台的輸入，可在瀏覽器內驗證後轉成 TTTC 或 Agora 格式，或整理成公開成果收據。",
+    "statements.csv and votes.csv feed the delib data workbench, which validates them in the browser and converts to TTTC or Agora formats or a public result receipt.",
+  ],
+  "r.exportWorkbench": ["delib 資料工作台 →", "delib data workbench →"],
   "r.exportNote": [
     "與 pol.is 報告頁匯出的 comments.csv 同格式，可直接上傳到 AI 意見綜整工具；作者欄以流水號匿名化。",
     "Same format as the comments.csv from a pol.is report, ready for AI sensemaking tools; authors are anonymized as sequence numbers.",

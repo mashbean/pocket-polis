@@ -440,6 +440,13 @@ async function handleConversationApi(
     return csvResponse(csv, "votes.csv");
   }
 
+  // Talk to the City 匯入格式（id,interview,comment），與其他匯出同一套 open-data／管理金鑰把關
+  if (subPath === "/export/tttc.csv" && request.method === "GET") {
+    const csv = await stub.exportTttcCsv(bearerToken(request, url));
+    if (csv === null) return jsonError("unauthorized (data export is not public for this conversation)", 403);
+    return csvResponse(csv, "tttc.csv");
+  }
+
   // ---- admin ----
 
   if (subPath === "/admin" && request.method === "GET") {

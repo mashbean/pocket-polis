@@ -989,6 +989,9 @@ async function refresh(options = {}) {
     // 主持人開啟「公開資料下載」時才出現 comments.csv 入口（伺服器端另有把關）
     if (info.openData) {
       document.getElementById("export-comments").href = `/api/conversations/${convId}/export/comments.csv`;
+      document.getElementById("export-tttc").href = `/api/conversations/${convId}/export/tttc.csv`;
+      document.getElementById("export-statements").href = `/api/conversations/${convId}/export/statements.csv`;
+      document.getElementById("export-votes").href = `/api/conversations/${convId}/export/votes.csv`;
       show(document.getElementById("export-section"), true);
     }
     infoLoaded = true;

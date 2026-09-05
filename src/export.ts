@@ -60,6 +60,22 @@ export function formatCommentsCsv(rows: CommentRow[]): string {
   return [POLIS_COMMENTS_HEADER, ...lines].join("\n") + "\n";
 }
 
+export const TTTC_HEADER = "id,interview,comment";
+
+export type TttcRow = { sid: number; text: string; isSeed: boolean; authorId: number };
+
+/**
+ * Talk to the City（tttc-light-js）的匯入格式：id,interview,comment。
+ * 只含已核准意見；interview 用來標記來源：種子意見為 host，參與者投稿沿用 votes.csv 的 pN 匿名代號，
+ * 讓 TTTC 的歸因與投票資料對得起來。comment 一律加引號。
+ */
+export function formatTttcCsv(rows: TttcRow[]): string {
+  const lines = rows.map((r) =>
+    [`statement-${r.sid}`, r.isSeed || r.authorId === 0 ? "host" : `p${r.authorId}`, csvQuote(r.text)].join(","),
+  );
+  return [TTTC_HEADER, ...lines].join("\n") + "\n";
+}
+
 /** 一律加引號（pol.is comment-body 的寫法） */
 export function csvQuote(text: string): string {
   return `"${text.replaceAll('"', '""')}"`;
