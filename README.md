@@ -14,7 +14,7 @@ Live site: **<https://polis.mashbean.net/en>** · Demo: [a simulated defense-bud
 - **Participate**: anonymous voting (agree / disagree / pass), submit new statements, low-vote statements get shown first
 - **Moderate**: approve or reject statements, open/close the conversation
 - **Math, live**: mean imputation → PCA (power iteration, sparsity-aware projection) → k-means (silhouette picks 2–5 groups, with k-smoothing so groups stay stable between refreshes) → representative statements per group (repness + proportion tests) → group-aware consensus — computed inside the Worker
-- **Report & AI Sensemaking**: live opinion map with group outlines, "you are here", thematic issue directory, cross-group common ground & deliberation tension insights with citations (via native Workers AI `@cf/google/gemma-4-26b-a4b-it`), per-group representative statements, consensus list, anonymized CSV export (including a pol.is-compatible `comments.csv` that drops straight into [Sensemaker](https://make.vtaiwan.tw/))
+- **Report & AI Sensemaking**: live opinion map with group outlines, "you are here", thematic issue directory, cross-group common ground & deliberation tension insights with citations, a Community Notes-style bridging rank (statements still agreed with after the opinion axis is factored out) (via native Workers AI `@cf/google/gemma-4-26b-a4b-it`), per-group representative statements, consensus list, anonymized CSV export (including a pol.is-compatible `comments.csv` that drops straight into [Sensemaker](https://make.vtaiwan.tw/))
 - **Bilingual**: full zh-Hant / English UI (`?lang=`, auto-detected)
 
 ## Architecture

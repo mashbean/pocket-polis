@@ -61,6 +61,25 @@ export interface OpinionPoint {
   group: number;
 }
 
+export interface BridgingStatement {
+  sid: number;
+  /** 扣掉立場軸之後的同意程度；越高越像跨立場都能接受的橋 */
+  score: number;
+  /** 極化度 0..1：這句話有多依賴立場軸 */
+  polarity: number;
+  seen: number;
+  agrees: number;
+  disagrees: number;
+}
+
+export interface BridgingResult {
+  method: "matrix-factorization-1d";
+  nParticipants: number;
+  minSeen: number;
+  iterations: number;
+  statements: BridgingStatement[];
+}
+
 export interface MathResult {
   computedAt: number;
   nParticipantsTotal: number;
@@ -74,6 +93,8 @@ export interface MathResult {
   groups: GroupResult[];
   consensus: { agree: ConsensusStatement[]; disagree: ConsensusStatement[] };
   statementStats: StatementStat[];
+  /** 橋接排序（Community Notes／Agora 式），只有陳述層級的彙整；納入分群者不足 4 人時為 null */
+  bridging?: BridgingResult | null;
 }
 
 export interface PipelineOutput {

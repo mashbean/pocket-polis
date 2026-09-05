@@ -1,3 +1,4 @@
+import { bridgingRank } from "./bridging";
 import { buildMatrix, inclusionThreshold } from "./matrix";
 import { chooseGroups } from "./kmeans";
 import { powerPCA, projectParticipants } from "./pca";
@@ -48,6 +49,7 @@ export function computeMath(input: PipelineInput): PipelineOutput {
     groups: [],
     consensus: { agree: [], disagree: [] },
     statementStats,
+    bridging: null,
   };
 
   if (matrix.pids.length === 0 || statementIds.length === 0) {
@@ -94,6 +96,7 @@ export function computeMath(input: PipelineInput): PipelineOutput {
   }
 
   const consensus = consensusStatements(matrix, assignments, grouping.k);
+  const bridging = bridgingRank(matrix, mulberry32(hashSeed(`${input.conversationId}:bridging:${votes.length}`)));
 
   const pidPoints: Record<string, OpinionPoint> = {};
   matrix.pids.forEach((pid, i) => {
@@ -108,6 +111,7 @@ export function computeMath(input: PipelineInput): PipelineOutput {
       points,
       groups,
       consensus,
+      bridging,
     },
     pidPoints,
   };

@@ -861,6 +861,25 @@ function renderConsensus(result) {
   }
 }
 
+function renderBridging(result) {
+  const container = document.getElementById("bridging-container");
+  if (!container) return;
+  container.replaceChildren();
+  const bridging = result.bridging;
+  if (!bridging || bridging.statements.length === 0) {
+    container.append(el("p", { class: "muted", text: t("r.bridgingEmpty") }));
+    return;
+  }
+  for (const s of bridging.statements.slice(0, 8)) {
+    const score = (s.score >= 0 ? "+" : "") + s.score.toFixed(2);
+    const line = statementLine(s.sid, [
+      el("span", { class: `tag ${s.score >= 0 ? "agree" : "disagree"}`, text: t("r.bridgingScore", { score }) }),
+      el("span", { class: "tag pending", text: t("r.bridgingPolarity", { polarity: Math.round(s.polarity * 100) }) }),
+    ]);
+    if (line) container.append(line);
+  }
+}
+
 function renderGroups(result) {
   const container = document.getElementById("groups-container");
   container.replaceChildren();
@@ -1019,6 +1038,7 @@ async function refresh(options = {}) {
   renderStats(result);
   renderMap(result, you);
   renderConsensus(result);
+  renderBridging(result);
   renderGroups(result);
 
   // applySynthesis 會在對齊主題篩選後渲染陳述列表；不在此先渲染，避免列表用舊綜整、卡片用新綜整
